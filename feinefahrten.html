@@ -324,7 +324,7 @@
 
 <script>
 (function() {
-  const API_URL = 'https://api.feinefahrten.de/chat';
+  const API_URL = '/api/generate';
   const fab      = document.getElementById('ff-chat-fab');
   const win      = document.getElementById('ff-chat-window');
   const closeBtn = document.getElementById('ff-chat-close');
@@ -362,7 +362,7 @@
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ prompt: text })
       });
       const data = await res.json();
       typing.remove();
