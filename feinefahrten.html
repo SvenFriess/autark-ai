@@ -324,7 +324,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  var API_URL = 'https://api.feinefahrten.de/chat';
+  var API_URL = 'https://api.feinefahrten.de/api/generate';
   var fab      = document.getElementById('ff-chat-fab');
   var win      = document.getElementById('ff-chat-window');
   var closeBtn = document.getElementById('ff-chat-close');
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({ prompt: text })
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
