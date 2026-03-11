@@ -317,7 +317,7 @@
   </div>
   <div id="ff-chat-input-row">
     <input id="ff-chat-input" type="text" placeholder="Deine Frage..." maxlength="500" autocomplete="off" />
-    <button id="ff-chat-send" aria-label="Senden">→</button>
+    <button id="ff-chat-send" aria-label="Senden" onclick="(function(){var t=document.getElementById('ff-chat-input').value.trim();if(!t)return;document.getElementById('ff-chat-input').value='';var m=document.getElementById('ff-chat-messages');var d=document.createElement('div');d.className='ff-msg user';d.textContent=t;m.appendChild(d);var typing=document.createElement('div');typing.className='ff-msg typing';typing.innerHTML='<span></span><span></span><span></span>';m.appendChild(typing);m.scrollTop=m.scrollHeight;fetch('https://api.feinefahrten.de/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t})}).then(r=>r.json()).then(data=>{typing.remove();var b=document.createElement('div');b.className='ff-msg bot';b.textContent=data.response||'Bitte nutze das Kontaktformular.';m.appendChild(b);m.scrollTop=m.scrollHeight;}).catch(()=>{typing.remove();var b=document.createElement('div');b.className='ff-msg bot';b.textContent='Verbindungsfehler. Bitte versuche es erneut.';m.appendChild(b);});})()">→</button>
   </div>
   <div id="ff-chat-footer">Powered by Local AI · feinefahrten.de</div>
 </div>
