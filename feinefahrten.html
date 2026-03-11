@@ -366,4 +366,18 @@
       });
       const data = await res.json();
       typing.remove();
-      addMessage(data.response || 'Bitte wende dich direkt an uns ü
+      addMessage(data.response || 'Bitte wende dich direkt an uns über das Kontaktformular.', 'bot');
+    } catch (err) {
+      typing.remove();
+      addMessage('Verbindungsfehler. Bitte versuche es erneut oder nutze das Kontaktformular.', 'bot');
+    } finally {
+      sendBtn.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
