@@ -291,7 +291,7 @@
 <!-- FEINE FAHRTEN CHAT WIDGET                  -->
 <!-- ═══════════════════════════════════════════ -->
 
-<button id="ff-chat-fab" aria-label="Feine Fahrten Assistent öffnen" title="Fragen zum Bulli?">
+<button id="ff-chat-fab" aria-label="Feine Fahrten Assistent öffnen" title="Fragen zum Bulli?" onclick="document.getElementById('ff-chat-window').classList.toggle('open')">
   <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="4" y="14" width="28" height="14" rx="3" fill="#3D2B1F"/>
     <rect x="7" y="8"  width="16" height="9"  rx="2" fill="#3D2B1F"/>
@@ -310,7 +310,7 @@
       <h3>Feine Fahrten</h3>
       <span>Dein Bulli-Assistent</span>
     </div>
-    <button id="ff-chat-close" aria-label="Schließen">✕</button>
+    <button id="ff-chat-close" aria-label="Schließen" onclick="document.getElementById('ff-chat-window').classList.remove('open')">✕</button>
   </div>
   <div id="ff-chat-messages">
     <div class="ff-msg bot">Hallo! 👋 Ich bin der Assistent von <strong>Feine Fahrten</strong>. Frag mich alles rund um unseren klassischen VW T2b Bulli!</div>
