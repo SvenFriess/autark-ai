@@ -118,7 +118,7 @@
     #ff-chat-fab { position: fixed; bottom: 28px; right: 28px; width: 62px; height: 62px; background: var(--bulli-yellow); border: 3px solid var(--bulli-brown); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 4px 4px 0 var(--bulli-brown); z-index: 9998; transition: transform 0.15s ease, box-shadow 0.15s ease; }
     #ff-chat-fab:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--bulli-brown); }
     #ff-chat-fab svg { width: 30px; height: 30px; }
-    #ff-chat-window { position: fixed; bottom: 104px; right: 28px; width: 340px; max-height: 520px; background: var(--bulli-cream); border: 3px solid var(--bulli-brown); border-radius: 16px 16px 4px 16px; box-shadow: 6px 6px 0 var(--bulli-brown); display: flex; flex-direction: column; z-index: 9999; overflow: hidden; font-family: 'Lato', sans-serif; transform: scale(0.92) translateY(12px); opacity: 0; pointer-events: none; transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), opacity 0.18s ease; }
+    #ff-chat-window { position: fixed; bottom: 104px; right: 28px; width: min(340px, calc(100vw - 44px)); max-height: min(520px, calc(100dvh - 120px)); background: var(--bulli-cream); border: 3px solid var(--bulli-brown); border-radius: 16px 16px 4px 16px; box-shadow: 6px 6px 0 var(--bulli-brown); display: flex; flex-direction: column; z-index: 9999; overflow: hidden; font-family: 'Lato', sans-serif; transform: scale(0.92) translateY(12px); opacity: 0; pointer-events: none; transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), opacity 0.18s ease; }
     #ff-chat-window.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
     #ff-chat-header { background: var(--bulli-yellow); border-bottom: 3px solid var(--bulli-brown); padding: 14px 18px 12px; display: flex; align-items: center; gap: 12px; }
     #ff-chat-header .bulli-icon { font-size: 26px; line-height: 1; }
@@ -141,7 +141,7 @@
     #ff-chat-send { background: var(--bulli-brown); color: var(--bulli-yellow); border: 2px solid var(--bulli-brown); border-radius: 8px; padding: 8px 14px; cursor: pointer; font-size: 16px; transition: background 0.1s, transform 0.1s; }
     #ff-chat-send:hover { background: var(--bulli-rust); border-color: var(--bulli-rust); transform: translateY(-1px); }
     #ff-chat-footer { text-align: center; font-size: 10px; color: #aaa; padding: 5px 0 8px; letter-spacing: 0.03em; }
-    @media (max-width: 420px) { #ff-chat-window { width: calc(100vw - 32px); right: 16px; bottom: 92px; } #ff-chat-fab { right: 16px; bottom: 16px; } }
+    @media (max-width: 420px) { #ff-chat-window { right: 16px; bottom: 88px; } #ff-chat-fab { right: 16px; bottom: 16px; } }
   </style>
 </head>
 <body>
@@ -258,7 +258,7 @@
       <div class="kontakt-info">
         <h3>Feine Fahrten</h3>
         <div class="kontakt-detail"><span class="kontakt-detail-icon">📞</span><a href="tel:+4917195618680">+49 171 9561868</a></div>
-        <div class="kontakt-detail"><span class="kontakt-detail-icon">✉️</span><a href="mailto:info@feinefahrten.de">info@feinefahrten.de</a></div>
+        <div class="kontakt-detail"><span class="kontakt-detail-icon">✉️</span><a href="/cdn-cgi/l/email-protection#771e1911183711121e191211161f05031219591312"><span class="__cf_email__" data-cfemail="d5bcbbb3ba95b3b0bcbbb0b3b4bda7a1b0bbfbb1b0">[email&#160;protected]</span></a></div>
         <div class="kontakt-detail"><span class="kontakt-detail-icon">📍</span><span>Frankfurt am Main</span></div>
       </div>
       <div class="einsatz-list">
@@ -279,7 +279,7 @@
   <span>©Urheberrecht. Alle Rechte vorbehalten.</span>
   <div class="footer-socials">
     <a href="https://instagram.com" title="Instagram">📷</a>
-    <a href="mailto:info@feinefahrten.de" title="E-Mail">✉️</a>
+    <a href="/cdn-cgi/l/email-protection#325b5c545d7254575b5c5754535a4046575c1c5657" title="E-Mail">✉️</a>
   </div>
   <div>
     <a href="/impressum.html" style="color:#666;text-decoration:none;margin-right:1rem;">Impressum</a>
@@ -322,7 +322,7 @@
   <div id="ff-chat-footer">Powered by Local AI · feinefahrten.de</div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function() {
   const API_URL = '/api/generate';
   const fab      = document.getElementById('ff-chat-fab');
@@ -366,17 +366,4 @@
       });
       const data = await res.json();
       typing.remove();
-      addMessage(data.response || 'Bitte wende dich direkt an uns über das Kontaktformular!', 'bot');
-    } catch (err) {
-      typing.remove();
-      addMessage('Verbindung fehlgeschlagen. Bitte versuche es später nochmal.', 'bot');
-    }
-    sendBtn.disabled = false;
-    input.disabled = false;
-    input.focus();
-  }
-})();
-</script>
-
-</body>
-</html>
+      addMessage(data.response || 'Bitte wende dich direkt an uns ü
