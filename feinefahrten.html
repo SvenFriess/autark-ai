@@ -291,7 +291,7 @@
 <!-- FEINE FAHRTEN CHAT WIDGET                  -->
 <!-- ═══════════════════════════════════════════ -->
 
-<button id="ff-chat-fab" aria-label="Feine Fahrten Assistent öffnen" title="Fragen zum Bulli?" onclick="document.getElementById('ff-chat-window').classList.toggle('open')">
+<button id="ff-chat-fab" aria-label="Feine Fahrten Assistent öffnen" title="Fragen zum Bulli?">
   <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="4" y="14" width="28" height="14" rx="3" fill="#3D2B1F"/>
     <rect x="7" y="8"  width="16" height="9"  rx="2" fill="#3D2B1F"/>
@@ -310,35 +310,35 @@
       <h3>Feine Fahrten</h3>
       <span>Dein Bulli-Assistent</span>
     </div>
-    <button id="ff-chat-close" aria-label="Schließen" onclick="document.getElementById('ff-chat-window').classList.remove('open')">✕</button>
+    <button id="ff-chat-close" aria-label="Schließen">✕</button>
   </div>
   <div id="ff-chat-messages">
     <div class="ff-msg bot">Hallo! 👋 Ich bin der Assistent von <strong>Feine Fahrten</strong>. Frag mich alles rund um unseren klassischen VW T2b Bulli!</div>
   </div>
   <div id="ff-chat-input-row">
     <input id="ff-chat-input" type="text" placeholder="Deine Frage..." maxlength="500" autocomplete="off" />
-    <button id="ff-chat-send" aria-label="Senden" onclick="(function(){var t=document.getElementById('ff-chat-input').value.trim();if(!t)return;document.getElementById('ff-chat-input').value='';var m=document.getElementById('ff-chat-messages');var d=document.createElement('div');d.className='ff-msg user';d.textContent=t;m.appendChild(d);var typing=document.createElement('div');typing.className='ff-msg typing';typing.innerHTML='<span></span><span></span><span></span>';m.appendChild(typing);m.scrollTop=m.scrollHeight;fetch('https://api.feinefahrten.de/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t})}).then(r=>r.json()).then(data=>{typing.remove();var b=document.createElement('div');b.className='ff-msg bot';b.textContent=data.response||'Bitte nutze das Kontaktformular.';m.appendChild(b);m.scrollTop=m.scrollHeight;}).catch(()=>{typing.remove();var b=document.createElement('div');b.className='ff-msg bot';b.textContent='Verbindungsfehler. Bitte versuche es erneut.';m.appendChild(b);});})()">→</button>
+    <button id="ff-chat-send" aria-label="Senden">→</button>
   </div>
   <div id="ff-chat-footer">Powered by Local AI · feinefahrten.de</div>
 </div>
 
 <script>
-(function() {
-  const API_URL = 'https://api.feinefahrten.de/chat';
-  const fab      = document.getElementById('ff-chat-fab');
-  const win      = document.getElementById('ff-chat-window');
-  const closeBtn = document.getElementById('ff-chat-close');
-  const input    = document.getElementById('ff-chat-input');
-  const sendBtn  = document.getElementById('ff-chat-send');
-  const messages = document.getElementById('ff-chat-messages');
+document.addEventListener('DOMContentLoaded', function() {
+  var API_URL = 'https://api.feinefahrten.de/chat';
+  var fab      = document.getElementById('ff-chat-fab');
+  var win      = document.getElementById('ff-chat-window');
+  var closeBtn = document.getElementById('ff-chat-close');
+  var input    = document.getElementById('ff-chat-input');
+  var sendBtn  = document.getElementById('ff-chat-send');
+  var messages = document.getElementById('ff-chat-messages');
 
-  fab.addEventListener('click', () => win.classList.toggle('open'));
-  closeBtn.addEventListener('click', () => win.classList.remove('open'));
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  fab.addEventListener('click', function() { win.classList.toggle('open'); });
+  closeBtn.addEventListener('click', function() { win.classList.remove('open'); });
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
   sendBtn.addEventListener('click', sendMessage);
 
   function addMessage(text, type) {
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.className = 'ff-msg ' + type;
     if (type === 'typing') {
       div.innerHTML = '<span></span><span></span><span></span>';
@@ -350,34 +350,35 @@
     return div;
   }
 
-  async function sendMessage() {
-    const text = input.value.trim();
+  function sendMessage() {
+    var text = input.value.trim();
     if (!text) return;
     input.value = '';
     sendBtn.disabled = true;
     input.disabled = true;
     addMessage(text, 'user');
-    const typing = addMessage('', 'typing');
-    try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: text })
-      });
-      const data = await res.json();
+    var typing = addMessage('', 'typing');
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
       typing.remove();
-      addMessage(data.response || 'Bitte wende dich direkt an uns über das Kontaktformular.', 'bot');
-    } catch (err) {
+      addMessage(data.response || 'Bitte nutze das Kontaktformular.', 'bot');
+    })
+    .catch(function() {
       typing.remove();
-      addMessage('Verbindungsfehler. Bitte versuche es erneut oder nutze das Kontaktformular.', 'bot');
-    } finally {
+      addMessage('Verbindungsfehler. Bitte versuche es erneut.', 'bot');
+    })
+    .finally(function() {
       sendBtn.disabled = false;
       input.disabled = false;
       input.focus();
-    }
+    });
   }
-})();
+});
 </script>
-
 </body>
 </html>
