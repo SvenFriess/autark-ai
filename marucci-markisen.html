@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marucci Markisen – Sonnenschutz, Rollläden & Terrassendächer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #3a6b35;
+  --green-light: #4e8a47;
+  --green-dark: #2d5429;
+  --gold: #c8a84b;
+  --dark: #1a1a1a;
+  --grey: #f5f4f0;
+  --text: #333;
+  --white: #fff;
+  --shadow: 0 4px 24px rgba(0,0,0,.08);
+}
+
+body {
+  font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--dark);
+  color: #aaa;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 7px 20px;
+  letter-spacing: .4px;
+}
+.topbar a { color: var(--gold); text-decoration: none; }
+.topbar .sep { color: #444; }
+
+/* ── NAV ── */
+nav {
+  background: var(--white);
+  border-bottom: 3px solid var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,.06);
+}
+.logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.logo-icon {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  color: white; font-size: 26px; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(58,107,53,.3);
+}
+.logo-text { line-height: 1.15; }
+.logo-text strong {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 21px;
+  color: var(--green);
+}
+.logo-text small {
+  font-size: 11px; color: #888;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 26px; list-style: none; }
+.nav-links a {
+  text-decoration: none; color: var(--text);
+  font-size: 13.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .4px;
+  transition: color .2s;
+  position: relative;
+}
+.nav-links a:hover { color: var(--green); }
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0; width: 0; height: 2px;
+  background: var(--green); transition: width .25s;
+}
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  background: var(--green) !important; color: white !important;
+  padding: 8px 18px; border-radius: 6px;
+  transition: background .2s, transform .15s !important;
+}
+.nav-cta:hover { background: var(--green-dark) !important; transform: translateY(-1px); }
+.nav-cta::after { display: none !important; }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #f0f7ef 0%, #e8f0e6 50%, #f5f4f0 100%);
+  padding: 80px 40px 70px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute;
+  top: -60%; right: -20%; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(58,107,53,.06) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px; color: var(--dark);
+  margin-bottom: 16px; position: relative;
+}
+.hero h1 span { color: var(--green); }
+.hero p {
+  font-size: 18px; color: #666;
+  max-width: 600px; margin: 0 auto 32px;
+}
+.hero-cta {
+  display: inline-block;
+  background: var(--green); color: white;
+  padding: 14px 36px; border-radius: 8px;
+  text-decoration: none; font-weight: 600;
+  font-size: 16px; letter-spacing: .3px;
+  transition: all .25s;
+  box-shadow: 0 4px 16px rgba(58,107,53,.25);
+}
+.hero-cta:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(58,107,53,.3); }
+
+/* ── PROMO BANNER ── */
+.promo {
+  background: linear-gradient(90deg, var(--green), var(--green-light));
+  color: white; text-align: center;
+  padding: 14px 20px; font-size: 15px;
+  letter-spacing: .3px;
+}
+.promo strong { color: var(--gold); }
+
+/* ── BRANDS ── */
+.brands {
+  background: var(--grey);
+  padding: 28px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.brands span {
+  font-size: 15px; font-weight: 700;
+  color: #999; letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── PRODUCTS SECTION ── */
+.products {
+  padding: 70px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.products h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px; text-align: center;
+  margin-bottom: 12px; color: var(--dark);
+}
+.products .subtitle {
+  text-align: center; color: #888;
+  font-size: 16px; margin-bottom: 48px;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.product-card {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform .25s, box-shadow .25s;
+  cursor: pointer;
+}
+.product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+.product-img {
+  height: 180px;
+  background: linear-gradient(135deg, #e8f0e6, #d4e4d1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+}
+.product-card h3 {
+  padding: 18px 20px 6px;
+  font-size: 17px; color: var(--dark);
+}
+.product-card p {
+  padding: 0 20px 20px;
+  font-size: 13.5px; color: #888; line-height: 1.5;
+}
+
+/* ── TRUST ── */
+.trust {
+  background: var(--grey);
+  padding: 50px 40px;
+  text-align: center;
+}
+.trust-grid {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.trust-item { text-align: center; }
+.trust-item .number {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; color: var(--green);
+  font-weight: 700;
+}
+.trust-item .label { font-size: 13px; color: #888; margin-top: 4px; }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  background: linear-gradient(135deg, var(--dark), #2a2a2a);
+  color: white;
+  padding: 60px 40px;
+  text-align: center;
+}
+.cta-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px; margin-bottom: 12px;
+}
+.cta-section p { color: #aaa; margin-bottom: 28px; font-size: 16px; }
+.cta-section .btn {
+  display: inline-block;
+  background: var(--green); color: white;
+  padding: 14px 36px; border-radius: 8px;
+  text-decoration: none; font-weight: 600;
+  transition: all .25s;
+}
+.cta-section .btn:hover { background: var(--green-light); transform: translateY(-2px); }
+.cta-section .ki-hint {
+  margin-top: 18px; font-size: 14px; color: var(--gold);
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--dark);
+  color: #888;
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+footer strong { color: #ccc; }
+footer a { color: var(--gold); text-decoration: none; }
+
+/* ── KI LABEL ── */
+.ki-label {
+  position: fixed;
+  bottom: 100px;
+  right: 28px;
+  background: rgba(58,107,53,.92);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  z-index: 999;
+  animation: ki-pulse 2.5s ease-in-out infinite;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(58,107,53,.3);
+}
+.ki-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: #4cff4c;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: blink 1.2s infinite;
+}
+@keyframes ki-pulse { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* ═══════════════════════════
+   CHATBOT WIDGET
+═══════════════════════════ */
+#chat-bubble { position: fixed; bottom: 24px; right: 24px; z-index: 1000; }
+
+#chat-toggle {
+  width: 62px; height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(58,107,53,.35);
+  transition: all .25s;
+  position: relative;
+}
+#chat-toggle:hover { transform: scale(1.08); box-shadow: 0 8px 32px rgba(58,107,53,.4); }
+#chat-toggle svg { width: 28px; height: 28px; fill: white; }
+.chat-badge {
+  position: absolute; top: -4px; right: -4px;
+  width: 22px; height: 22px;
+  background: #e53e3e;
+  border-radius: 50%;
+  font-size: 12px; font-weight: 700;
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  animation: badge-bounce 1.8s infinite;
+}
+@keyframes badge-bounce {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+#chat-window {
+  position: absolute;
+  bottom: 76px; right: 0;
+  width: 380px;
+  max-height: 540px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0,0,0,.18);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e8e8e8;
+}
+#chat-window.open { display: flex; animation: slideUp .3s ease; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.chat-header {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: white; padding: 16px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.chat-avatar {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700;
+}
+.chat-header-info strong { display: block; font-size: 15px; }
+.chat-header-info span { font-size: 11.5px; opacity: .85; display: flex; align-items: center; gap: 5px; }
+.chat-online {
+  width: 7px; height: 7px;
+  background: #4cff4c;
+  border-radius: 50%;
+  display: inline-block;
+}
+.chat-close {
+  margin-left: auto;
+  background: rgba(255,255,255,.15); border: none;
+  color: white; font-size: 20px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+.chat-close:hover { background: rgba(255,255,255,.25); }
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  scroll-behavior: smooth;
+}
+
+.msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  animation: msgIn .25s ease;
+}
+@keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.msg.bot {
+  background: #f0f4ef;
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+.msg.user {
+  background: var(--green);
+  color: white;
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+
+.typing {
+  display: flex; gap: 4px;
+  padding: 12px 18px;
+  background: #f0f4ef;
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  max-width: 70px;
+}
+.typing span {
+  width: 7px; height: 7px;
+  background: #aaa;
+  border-radius: 50%;
+  animation: typeDot .8s infinite;
+}
+.typing span:nth-child(2) { animation-delay: .15s; }
+.typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes typeDot { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+.quick-replies {
+  padding: 6px 16px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.quick-replies button {
+  background: white;
+  border: 1.5px solid var(--green);
+  color: var(--green);
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.quick-replies button:hover {
+  background: var(--green);
+  color: white;
+}
+
+.chat-input-area {
+  padding: 10px 14px;
+  border-top: 1px solid #eee;
+  display: flex; gap: 8px;
+}
+.chat-input-area input {
+  flex: 1;
+  border: 1.5px solid #ddd;
+  border-radius: 24px;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .2s;
+}
+.chat-input-area input:focus { border-color: var(--green); }
+#send-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--green);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+#send-btn:hover { background: var(--green-dark); }
+#send-btn svg { width: 18px; height: 18px; fill: white; }
+.chat-footer-note {
+  text-align: center;
+  font-size: 10.5px;
+  color: #bbb;
+  padding: 4px 0 10px;
+}
+.chat-footer-note span { color: var(--green); font-weight: 600; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 10px 16px; }
+  .nav-links { display: none; }
+  .hero h1 { font-size: 28px; }
+  .hero { padding: 50px 20px 40px; }
+  .product-grid { grid-template-columns: 1fr; }
+  #chat-window { width: calc(100vw - 32px); right: -8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span>Friedhofstraße 23, 63263 Neu-Isenburg</span>
+  <span class="sep">|</span>
+  <span>Tel: <a href="tel:0610229160">06102 – 29160</a></span>
+  <span class="sep">|</span>
+  <span>Mo–Fr 9:00–18:00 · Sa 10:00–14:00</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-icon">M</div>
+    <div class="logo-text">
+      <strong>Marucci Markisen</strong>
+      <small>Sonnen-, Wind- &amp; Sichtschutz-Experten</small>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Start</a></li>
+    <li><a href="#">Sonnenschutz</a></li>
+    <li><a href="#">Terrassendächer</a></li>
+    <li><a href="#">Rollläden</a></li>
+    <li><a href="#">Garagentore</a></li>
+    <li><a href="#">Über uns</a></li>
+    <li><a href="#" class="nav-cta">Kontakt</a></li>
+  </ul>
+</nav>
+
+<!-- PROMO -->
+<div class="promo">
+  ☀️ <strong>Frühlingsaktion 2026</strong> — Jetzt Beratungstermin vereinbaren und von attraktiven Sonderkonditionen profitieren!
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Markisen, Rollläden &amp;<br><span>Sonnenschutz</span> in Neu-Isenburg</h1>
+  <p>Seit über 30 Jahren Ihr Fachbetrieb für hochwertigen Sonnen-, Wind- und Sichtschutz im Rhein-Main-Gebiet.</p>
+  <a href="#" class="hero-cta">Kostenlose Beratung anfragen</a>
+</section>
+
+<!-- BRANDS -->
+<div class="brands">
+  <span>Markilux</span>
+  <span>Weinor</span>
+  <span>Somfy</span>
+  <span>Roma</span>
+  <span>Warema</span>
+</div>
+
+<!-- PRODUCTS -->
+<section class="products">
+  <h2>Unsere Leistungen</h2>
+  <p class="subtitle">Qualität, Beratung und Montage aus einer Hand</p>
+  <div class="product-grid">
+    <div class="product-card">
+      <div class="product-img">☀️</div>
+      <h3>Markisen</h3>
+      <p>Gelenkarm-, Pergola- und Kassettenmarkisen namhafter Hersteller. Individuell konfiguriert und fachgerecht montiert.</p>
+    </div>
+    <div class="product-card">
+      <div class="product-img">🏠</div>
+      <h3>Rollläden & Garagentore</h3>
+      <p>Elektrische Rollläden zum Nachrüsten, Vorbaurollläden und moderne Garagentore mit Smart-Home-Anbindung.</p>
+    </div>
+    <div class="product-card">
+      <div class="product-img">🌧️</div>
+      <h3>Terrassenüberdachungen</h3>
+      <p>Glas- und Polycarbonat-Lösungen mit LED-Beleuchtung, Heizstrahlern und optionaler Seitenverglasung.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="trust-grid">
+    <div class="trust-item">
+      <div class="number">30+</div>
+      <div class="label">Jahre Erfahrung</div>
+    </div>
+    <div class="trust-item">
+      <div class="number">5.000+</div>
+      <div class="label">Zufriedene Kunden</div>
+    </div>
+    <div class="trust-item">
+      <div class="number">4,8 ★</div>
+      <div class="label">Google-Bewertung</div>
+    </div>
+    <div class="trust-item">
+      <div class="number">100%</div>
+      <div class="label">Fachberatung vor Ort</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Persönliche Beratung gewünscht?</h2>
+  <p>Besuchen Sie unsere Ausstellung oder lassen Sie sich bequem zu Hause beraten.</p>
+  <a href="#" class="btn">Termin vereinbaren</a>
+  <div class="ki-hint">💬 Unser KI-Assistent hilft Ihnen sofort – klicken Sie unten rechts!</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div><strong>Marucci Markisen GmbH</strong> · Friedhofstraße 23, 63263 Neu-Isenburg</div>
+  <div>Tel: <a href="tel:0610229160">06102 – 29160</a> · © 2026</div>
+</footer>
+
+<!-- KI LABEL -->
+<div class="ki-label" id="ki-label">
+  <span class="ki-dot"></span> KI-Assistent aktiv
+</div>
+
+<!-- ═══════════════════════════
+     CHATBOT WIDGET
+═══════════════════════════ -->
+<div id="chat-bubble">
+  <button id="chat-toggle" onclick="toggleChat()" title="Chat öffnen">
+    <svg id="icon-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+    <svg id="icon-close" viewBox="0 0 24 24" style="display:none"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    <div class="chat-badge">1</div>
+  </button>
+
+  <div id="chat-window">
+    <div class="chat-header">
+      <div class="chat-avatar">M</div>
+      <div class="chat-header-info">
+        <strong>Marucci Assistent</strong>
+        <span><span class="chat-online"></span> Jetzt online · antwortet sofort</span>
+      </div>
+      <button class="chat-close" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="quick-replies" id="quick-replies"></div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Nachricht schreiben..." onkeydown="if(event.key==='Enter') sendMessage()">
+      <button id="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+    <div class="chat-footer-note">Powered by <span>KI-Assistent</span> · Marucci Markisen</div>
+  </div>
+</div>
+
+<script>
+const flows = {
+  start: {
+    bot: 'Hallo! 👋 Herzlich willkommen bei <b>Marucci Markisen</b>.<br><br>Ich bin Ihr digitaler Assistent und helfe Ihnen rund um die Uhr – auch wenn unser Büro geschlossen ist.<br><br>Womit kann ich Ihnen helfen?',
+    replies: ['💶 Preise & Kosten', '📅 Termin vereinbaren', '🏠 Produkte entdecken', '⏰ Öffnungszeiten']
+  },
+  '💶 Preise & Kosten': {
+    bot: 'Gerne! Die Kosten hängen von Größe, Modell und Motorisierung ab.<br><br>💡 <b>Grobe Richtwerte:</b><br>• Gelenkarm-Markise ab ca. 800 €<br>• Rollladen elektrisch ab ca. 350 €<br>• Terrassenüberdachung ab ca. 3.500 €<br><br>Für ein genaues Angebot besuchen Sie uns oder vereinbaren Sie einen <b>kostenlosen Beratungstermin</b>!',
+    replies: ['📅 Termin vereinbaren', '🏠 Produkte entdecken', '↩️ Zurück zum Start']
+  },
+  '📅 Termin vereinbaren': {
+    bot: 'Super! 🎉 Unsere Experten kommen auch gerne zu Ihnen nach Hause zur <b>kostenlosen Vor-Ort-Beratung</b>.<br><br>📞 Rufen Sie uns einfach an:<br><b>06102 – 29160</b><br><br>Oder hinterlassen Sie hier Ihren Namen und wir melden uns am nächsten Werktag!',
+    replies: ['📝 Rückruf anfordern', '💶 Preise & Kosten', '↩️ Zurück zum Start']
+  },
+  '🏠 Produkte entdecken': {
+    bot: 'Wir bieten eine große Auswahl:<br><br>☀️ <b>Markisen</b> – Gelenkarm, Pergola, Kassettenmarkisen<br>🪟 <b>Rollläden</b> – auch elektrisch nachrüsten<br>🌧️ <b>Terrassenüberdachungen</b> – Glas & Polycarbonat<br>🚗 <b>Garagentore</b> – mit Smart-Home-Steuerung<br>🏠 <b>Sonnenschutz innen</b> – Plissee, Jalousien, Rollos<br><br>Was interessiert Sie am meisten?',
+    replies: ['☀️ Markisen', '🪟 Rollläden', '🌧️ Terrassendächer', '↩️ Zurück zum Start']
+  },
+  '⏰ Öffnungszeiten': {
+    bot: 'Unsere <b>Ausstellung</b> in Neu-Isenburg:<br><br>📍 Friedhofstraße 23, 63263 Neu-Isenburg<br><br>🕐 <b>Öffnungszeiten:</b><br>Mo – Fr: 9:00 – 18:00 Uhr<br>Sa: 10:00 – 14:00 Uhr<br>So: geschlossen<br><br>📞 <b>06102 – 29160</b><br><br>Wir freuen uns auf Ihren Besuch – und einen Espresso gibt\'s auch! ☕',
+    replies: ['📅 Termin vereinbaren', '🏠 Produkte entdecken', '↩️ Zurück zum Start']
+  },
+  '☀️ Markisen': {
+    bot: 'Unsere <b>Markisen</b> – von führenden Herstellern wie Markilux und Weinor:<br><br>• <b>Gelenkarmmarkisen</b> – der Klassiker für Terrasse & Balkon<br>• <b>Kassettenmarkisen</b> – geschütztes Tuch, elegantes Design<br>• <b>Pergola-Markisen</b> – wetterfest, auch bei Wind & leichtem Regen<br>• <b>Senkrechtmarkisen</b> – perfekter Sicht- und Blendschutz<br><br>Ab ca. <b>800 €</b> inkl. Montage. Jedes Stück wird individuell konfiguriert!',
+    replies: ['📅 Termin vereinbaren', '💶 Preise & Kosten', '↩️ Zurück zum Start']
+  },
+  '🪟 Rollläden': {
+    bot: 'Moderne <b>Rollläden</b> – auch zum Nachrüsten:<br><br>• Elektrische Rollläden ab ca. <b>350 €</b><br>• Vorbau-Rollläden für bestehende Fenster<br>• Smart-Home-Steuerung mit <b>Somfy</b>-Technologie<br>• Zeitschaltuhr & Sonnensensor möglich<br><br>Besonders beliebt: Elektrisches Nachrüsten bestehender Rollläden!',
+    replies: ['📅 Termin vereinbaren', '💶 Preise & Kosten', '↩️ Zurück zum Start']
+  },
+  '🌧️ Terrassendächer': {
+    bot: 'Unsere <b>Terrassenüberdachungen</b> – Ihre Terrasse bei jedem Wetter nutzbar! 🌦️<br><br>✅ Glas- oder Polycarbonatlösung<br>✅ Aluminium-Konstruktion<br>✅ Optionale Heizstrahler & LED-Beleuchtung<br>✅ Seitenverglasung möglich<br><br>Ab ca. <b>3.500 €</b> – wir planen das gemeinsam mit Ihnen!',
+    replies: ['📅 Termin vereinbaren', '💶 Preise & Kosten', '↩️ Zurück zum Start']
+  },
+  '📝 Rückruf anfordern': {
+    bot: 'Kein Problem! Bitte nennen Sie mir Ihren <b>Namen</b> und Ihre <b>Telefonnummer</b> – wir melden uns innerhalb eines Werktages bei Ihnen. 📞',
+    replies: ['↩️ Zurück zum Start']
+  },
+  '↩️ Zurück zum Start': {
+    bot: 'Wie kann ich Ihnen noch helfen? 😊',
+    replies: ['💶 Preise & Kosten', '📅 Termin vereinbaren', '🏠 Produkte entdecken', '⏰ Öffnungszeiten']
+  }
+};
+
+const keywords = {
+  'preis|kost|teuer|günstig|billig|euro|€|budget|angebot': '💶 Preise & Kosten',
+  'termin|beratung|besuch|kommen|beraten': '📅 Termin vereinbaren',
+  'markise|sonnenschutz|gelenkarm|pergola|kassette|tuch': '☀️ Markisen',
+  'rolll|rolladen|rolläden|nachrüst|fenster|motor': '🪟 Rollläden',
+  'terrasse|dach|überdach|glas|regen': '🌧️ Terrassendächer',
+  'öffnung|wann|uhr|offen|geöffnet|samstag|montag|zeit': '⏰ Öffnungszeiten',
+  'produkt|sortiment|angebot|was habt|was gibt|leistung': '🏠 Produkte entdecken',
+  'rückruf|anruf|telefon|zurückruf|melden': '📝 Rückruf anfordern'
+};
+
+let chatOpen = false;
+let initialized = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const win = document.getElementById('chat-window');
+  const iconChat = document.getElementById('icon-chat');
+  const iconClose = document.getElementById('icon-close');
+  const badge = document.querySelector('.chat-badge');
+  const kiLabel = document.getElementById('ki-label');
+
+  if (chatOpen) {
+    win.classList.add('open');
+    iconChat.style.display = 'none';
+    iconClose.style.display = 'block';
+    badge.style.display = 'none';
+    kiLabel.style.display = 'none';
+    if (!initialized) { initialized = true; startFlow(); }
+  } else {
+    win.classList.remove('open');
+    iconChat.style.display = 'block';
+    iconClose.style.display = 'none';
+  }
+}
+
+async function startFlow() {
+  await showTyping(900);
+  await addMsg(flows.start.bot, 'bot');
+  showReplies(flows.start.replies);
+}
+
+function showTyping(ms) {
+  return new Promise(resolve => {
+    const el = document.createElement('div');
+    el.className = 'typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    document.getElementById('chat-messages').appendChild(el);
+    scrollChat();
+    setTimeout(() => { el.remove(); resolve(); }, ms);
+  });
+}
+
+function addMsg(html, type) {
+  return new Promise(resolve => {
+    const el = document.createElement('div');
+    el.className = 'msg ' + type;
+    el.innerHTML = html;
+    document.getElementById('chat-messages').appendChild(el);
+    scrollChat();
+    setTimeout(resolve, 50);
+  });
+}
+
+function scrollChat() {
+  const c = document.getElementById('chat-messages');
+  c.scrollTop = c.scrollHeight;
+}
+
+function showReplies(arr) {
+  const box = document.getElementById('quick-replies');
+  box.innerHTML = '';
+  arr.forEach(text => {
+    const btn = document.createElement('button');
+    btn.textContent = text;
+    btn.onclick = () => handleReply(text);
+    box.appendChild(btn);
+  });
+}
+
+async function handleReply(text) {
+  document.getElementById('quick-replies').innerHTML = '';
+  await addMsg(text, 'user');
+  const flow = flows[text];
+  if (flow) {
+    await showTyping(800 + Math.random() * 600);
+    await addMsg(flow.bot, 'bot');
+    showReplies(flow.replies);
+  }
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  document.getElementById('quick-replies').innerHTML = '';
+  await addMsg(text, 'user');
+
+  let matched = null;
+  const lower = text.toLowerCase();
+  for (const [pattern, flowKey] of Object.entries(keywords)) {
+    if (new RegExp(pattern, 'i').test(lower)) {
+      matched = flowKey;
+      break;
+    }
+  }
+
+  let response;
+  if (matched && flows[matched]) {
+    response = flows[matched];
+  } else {
+    response = {
+      bot: 'Vielen Dank für Ihre Nachricht! 😊 Ich leite diese direkt an unser Team weiter.<br><br>Für eine sofortige Antwort rufen Sie uns gerne an:<br><br>📞 <b>06102 – 29160</b><br><br>Wie kann ich Ihnen noch helfen?',
+      replies: ['💶 Preise & Kosten', '📅 Termin vereinbaren', '⏰ Öffnungszeiten']
+    };
+  }
+
+  await showTyping(900 + Math.random() * 500);
+  await addMsg(response.bot, 'bot');
+  showReplies(response.replies);
+}
+</script>
+</body>
+</html>
