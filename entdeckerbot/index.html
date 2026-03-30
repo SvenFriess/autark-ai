@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EntdeckerBot – Demo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');
+
+  :root {
+    --bg: #1b1b1e;
+    --surface: #232326;
+    --surface2: #2c2c30;
+    --border: #3a3a3f;
+    --bot-bubble: #2a3a2e;
+    --bot-border: #3d6b45;
+    --user-bubble: #1d4a6b;
+    --user-border: #2d6fa0;
+    --accent: #4caf72;
+    --accent2: #7ecf9a;
+    --text: #e8e8ec;
+    --text-muted: #888890;
+    --text-time: #666670;
+    --header-bg: #1e2d22;
+    --input-bg: #2a2a2f;
+    --send-btn: #4caf72;
+    --chip-bg: #2a3a2e;
+    --chip-border: #3d6b45;
+    --chip-text: #7ecf9a;
+    --radius: 18px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .frame-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .phone {
+    width: 100%;
+    max-width: 400px;
+    background: var(--bg);
+    border-radius: 32px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 680px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+
+  /* Header */
+  .header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    color: var(--accent);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3d6b45, #1d4a6b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .header-info { flex: 1; min-width: 0; }
+
+  .header-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-sub {
+    font-size: 11.5px;
+    color: var(--accent2);
+    margin-top: 1px;
+  }
+
+  .header-icons { display: flex; gap: 14px; color: var(--accent); font-size: 16px; cursor: pointer; }
+
+  /* Messages */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scroll-behavior: smooth;
+  }
+
+  .messages::-webkit-scrollbar { width: 3px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .date-divider {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-time);
+    margin: 6px 0;
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 4px 12px;
+    align-self: center;
+  }
+
+  .msg-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    animation: fadeUp 0.25s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-row.bot { justify-content: flex-start; }
+  .msg-row.user { justify-content: flex-end; }
+
+  .msg-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3d6b45, #2a5c36);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .bubble {
+    max-width: 78%;
+    padding: 10px 13px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .bot .bubble {
+    background: var(--bot-bubble);
+    border: 1px solid var(--bot-border);
+    border-radius: var(--radius) var(--radius) var(--radius) 4px;
+    color: var(--text);
+  }
+
+  .user .bubble {
+    background: var(--user-bubble);
+    border: 1px solid var(--user-border);
+    border-radius: var(--radius) var(--radius) 4px var(--radius);
+    color: var(--text);
+  }
+
+  .bubble strong { color: var(--accent2); font-weight: 600; }
+  .bubble em { color: var(--text-muted); font-style: normal; font-size: 12px; }
+
+  .bubble ul { padding-left: 16px; margin-top: 6px; }
+  .bubble ul li { margin-bottom: 3px; }
+
+  .time {
+    font-size: 10.5px;
+    color: var(--text-time);
+    margin-top: 3px;
+    text-align: right;
+    padding: 0 4px;
+  }
+
+  .bot-col { display: flex; flex-direction: column; max-width: 78%; }
+  .user-col { display: flex; flex-direction: column; align-items: flex-end; }
+
+  /* Typing indicator */
+  .typing { display: flex; align-items: center; gap: 4px; padding: 12px 14px; }
+  .typing span {
+    width: 7px; height: 7px;
+    background: var(--accent2);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+    opacity: 0.6;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+  }
+
+  /* Suggestion chips */
+  .chips {
+    padding: 8px 12px 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .chip {
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+    color: var(--chip-text);
+    font-size: 11.5px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover { background: #3a5c40; border-color: var(--accent); }
+
+  /* Input area */
+  .input-area {
+    padding: 10px 12px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 8px 14px;
+    gap: 8px;
+    transition: border-color 0.2s;
+  }
+  .input-wrap:focus-within { border-color: var(--accent); }
+
+  .input-wrap input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .input-wrap input::placeholder { color: var(--text-muted); }
+
+  .send-btn {
+    width: 38px; height: 38px;
+    background: var(--send-btn);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .send-btn:hover { background: #5dc882; transform: scale(1.05); }
+  .send-btn:active { transform: scale(0.95); }
+
+  /* Badge for autark-ai */
+  .brand-badge {
+    position: absolute;
+    bottom: 6px;
+    right: 10px;
+    font-size: 9px;
+    color: var(--text-time);
+    letter-spacing: 0.05em;
+  }
+
+  /* Scrollbar thin */
+  .messages { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+</style>
+</head>
+<body>
+
+<div class="frame-label">🌿 EntdeckerBot — Live Demo · Panoramaweg Glauburg · powered by autark-AI</div>
+
+<div class="phone">
+  <!-- Header -->
+  <div class="header">
+    <div class="back-btn">‹</div>
+    <div class="avatar">🌿</div>
+    <div class="header-info">
+      <div class="header-name">EntdeckerBot Oberhessen</div>
+      <div class="header-sub">● online · DSGVO-konform · lokal</div>
+    </div>
+    <div class="header-icons">
+      <span>📞</span>
+      <span>⋮</span>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages" id="messages">
+    <div class="date-divider">Heute, 30. März 2026</div>
+
+    <div class="msg-row bot">
+      <div class="msg-avatar">🌿</div>
+      <div class="bot-col">
+        <div class="bubble">
+          Hallo! Ich bin der <strong>EntdeckerBot Oberhessen</strong> 👋<br><br>
+          Ich begleite dich auf den Entdeckerrouten rund um die <strong>Landesgartenschau Oberhessen 2027</strong>.<br><br>
+          Wie kann ich helfen?
+        </div>
+        <div class="time">08:14 ✓✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggestion chips -->
+  <div class="chips" id="chips">
+    <div class="chip" onclick="sendChip(this)">📍 Wann findet die Wanderung statt?</div>
+    <div class="chip" onclick="sendChip(this)">🗺️ Wo ist der Treffpunkt?</div>
+    <div class="chip" onclick="sendChip(this)">📸 Fotowettbewerb</div>
+    <div class="chip" onclick="sendChip(this)">🌳 Was sind Entdeckerpunkte?</div>
+    <div class="chip" onclick="sendChip(this)">ℹ️ Was ist die LGS 2027?</div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-wrap">
+      <input type="text" id="userInput" placeholder="Nachricht schreiben …" onkeydown="if(event.key==='Enter') sendMessage()">
+    </div>
+    <button class="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+const responses = {
+  "wann": {
+    text: "🗓️ Die erste <strong>Maiwanderung auf dem Panoramaweg Glauburg</strong> findet statt am:\n\n<strong>1. Mai 2026</strong>\n\nDas ist der offizielle Auftakt der neuen Entdeckerrouten-Serie des Freundeskreises Landesgartenschau Oberhessen.",
+    chips: ["🗺️ Wo ist der Treffpunkt?", "📸 Fotowettbewerb", "🌳 Was sind Entdeckerpunkte?"]
+  },
+  "treffpunkt": {
+    text: "📍 <strong>Treffpunkt Maiwanderung</strong>\n\nPanoramaweg Glauburg\n<em>Genaue Startzeit & Treffpunkt werden vom Freundeskreis kurz vor dem 1. Mai bekanntgegeben.</em>\n\nWeitere Infos: freunde-lgs-oberhessen.de",
+    chips: ["📅 Informationstermin?", "📸 Fotowettbewerb", "ℹ️ Was ist die LGS 2027?"]
+  },
+  "foto": {
+    text: "📸 <strong>Fotowettbewerb</strong>\n\nDer Freundeskreis sucht die schönsten Fotos aus Oberhessen!\n\n• Einfach Foto hier einschicken 📲\n• Thema: blühende Flächen, Natur, Wanderwege\n• Gewinne: Einladungen zu besonderen Veranstaltungen\n\nDer Wettbewerb läuft bis Ende 2026.",
+    chips: ["📍 Wann findet die Wanderung statt?", "🌳 Was sind Entdeckerpunkte?"]
+  },
+  "entdecker": {
+    text: "🌳 <strong>Entdeckerpunkte</strong>\n\nEntlang der Entdeckerrouten stehen markante <strong>Eichenholz-Stelen</strong> — gefertigt von Behindertenwerkstätten in Hirzenhain.\n\nJede Stele hat einen <strong>QR-Code</strong> → direkt in diesen Chat!\n\nEntdeckerpunkte verbinden:\n<ul><li>Natur & Landschaft</li><li>Regionalgeschichte</li><li>Kultur & Vereine</li></ul>",
+    chips: ["🗺️ Wo ist der Treffpunkt?", "📍 Wann findet die Wanderung statt?", "ℹ️ Was ist die LGS 2027?"]
+  },
+  "lgs": {
+    text: "🌸 <strong>Landesgartenschau Oberhessen 2027</strong>\n\nDie erste <strong>interkommunale Landesgartenschau in Hessen</strong> — 11 Kommunen, 88 Dörfer, über 90.000 Bürger:\n\nBüdingen, Echzell, Gedern, Glauburg, Hirzenhain, Kefenrod, Limeshain, Nidda, Ortenberg, Ranstadt & Schotten.\n\n📅 <strong>22. April bis 3. Oktober 2027</strong>",
+    chips: ["📍 Wann findet die Wanderung statt?", "🌳 Was sind Entdeckerpunkte?"]
+  },
+  "info": {
+    text: "📅 <strong>Informationstermin</strong>\n\nDonnerstag, <strong>23. April 2026</strong>\n11:00 – 12:30 Uhr\n\n📍 Glauburg-Stockheim\nGemeindehaus Kath. Pfarrkirche\nSudetenstraße 3",
+    chips: ["📍 Wann findet die Wanderung statt?", "ℹ️ Was ist die LGS 2027?"]
+  }
+};
+
+const fallback = {
+  text: "🤔 Gute Frage! Dazu habe ich gerade keine gespeicherte Antwort.\n\nDu kannst mich alles zu den <strong>Entdeckerrouten</strong>, der <strong>Maiwanderung</strong> oder der <strong>LGS 2027</strong> fragen — oder wende dich direkt an den Freundeskreis:\n\n📧 hallo@freunde-lgs-oberhessen.de",
+  chips: ["📍 Wann findet die Wanderung statt?", "🗺️ Wo ist der Treffpunkt?", "📸 Fotowettbewerb"]
+};
+
+function getTime() {
+  const now = new Date();
+  return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+}
+
+function addMessage(text, type) {
+  const msgs = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + type;
+
+  if (type === 'bot') {
+    row.innerHTML = `
+      <div class="msg-avatar">🌿</div>
+      <div class="bot-col">
+        <div class="bubble">${text.replace(/\n/g, '<br>')}</div>
+        <div class="time">${getTime()} ✓✓</div>
+      </div>`;
+  } else {
+    row.innerHTML = `
+      <div class="user-col">
+        <div class="bubble">${text}</div>
+        <div class="time">${getTime()} ✓✓</div>
+      </div>`;
+  }
+
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  row.id = 'typing-row';
+  row.innerHTML = `
+    <div class="msg-avatar">🌿</div>
+    <div class="bot-col">
+      <div class="bubble">
+        <div class="typing"><span></span><span></span><span></span></div>
+      </div>
+    </div>`;
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-row');
+  if (t) t.remove();
+}
+
+function updateChips(newChips) {
+  const c = document.getElementById('chips');
+  c.innerHTML = newChips.map(ch => `<div class="chip" onclick="sendChip(this)">${ch}</div>`).join('');
+}
+
+function processInput(text) {
+  const t = text.toLowerCase();
+  if (t.includes('wann') || t.includes('datum') || t.includes('mai') || t.includes('termin')) return responses.wann;
+  if (t.includes('treffpunkt') || t.includes('wo') || t.includes('start')) return responses.treffpunkt;
+  if (t.includes('foto') || t.includes('wettbewerb') || t.includes('bild')) return responses.foto;
+  if (t.includes('entdecker') || t.includes('stele') || t.includes('qr') || t.includes('punkt')) return responses.entdecker;
+  if (t.includes('lgs') || t.includes('gartenschau') || t.includes('2027')) return responses.lgs;
+  if (t.includes('info') || t.includes('23. april') || t.includes('veranstaltung')) return responses.info;
+  return fallback;
+}
+
+function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  send(text);
+}
+
+function sendChip(el) {
+  const text = el.textContent.trim();
+  send(text);
+}
+
+function send(text) {
+  addMessage(text, 'user');
+  showTyping();
+
+  const result = processInput(text);
+  setTimeout(() => {
+    removeTyping();
+    addMessage(result.text, 'bot');
+    updateChips(result.chips);
+  }, 900 + Math.random() * 500);
+}
+</script>
+
+</body>
+</html>
