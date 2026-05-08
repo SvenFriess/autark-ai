@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cloud-Risiko-Rechner | autark-AI</title>
+  <meta name="description" content="Berechnen Sie Ihr DSGVO-Bußgeldrisiko bei Cloud-KI-Nutzung. Kostenloser Compliance-Rechner für Steuerberater, Anwälte, Ärzte und Verwaltung.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
@@ -76,6 +77,16 @@
     
     .animate-in {
       animation: slideIn 0.4s ease-out forwards;
+    }
+    
+    .legal-links a {
+      color: #6b7280;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .legal-links a:hover {
+      color: #60a5fa;
     }
   </style>
 </head>
@@ -697,20 +708,42 @@
             </div>
           )}
 
-          {/* Footer */}
+          {/* Footer mit Impressum/Datenschutz */}
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
             marginTop: '24px',
             paddingTop: '20px',
             borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            fontSize: '13px',
-            color: '#6b7280',
           }}>
-            <span style={{ color: '#34d399', animation: 'pulse 2s infinite' }}>●</span>
-            <span>Powered by <strong>autark-AI</strong> • Frankfurt am Main</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              color: '#6b7280',
+              marginBottom: '12px',
+            }}>
+              <span style={{ color: '#34d399', animation: 'pulse 2s infinite' }}>●</span>
+              <span>Powered by <strong>autark-AI</strong> • Frankfurt am Main</span>
+            </div>
+            
+            {/* Legal Links */}
+            <div className="legal-links" style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '24px',
+              fontSize: '12px',
+            }}>
+              <a href="https://autark-ai.de/impressum.html" target="_blank" rel="noopener noreferrer">
+                Impressum
+              </a>
+              <a href="https://autark-ai.de/datenschutz.html" target="_blank" rel="noopener noreferrer">
+                Datenschutz
+              </a>
+              <a href="https://autark-ai.de" target="_blank" rel="noopener noreferrer">
+                autark-ai.de
+              </a>
+            </div>
           </div>
         </div>
       );
