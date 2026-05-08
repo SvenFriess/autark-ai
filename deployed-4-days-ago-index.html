@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>autark-AI.de – On-Premise KI für regulierte Branchen</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #1a5c3a;
+    --green-dark: #134a2e;
+    --green-light: #e8f5ee;
+    --green-mid: #2d7a50;
+    --accent: #22c55e;
+    --bg: #ffffff;
+    --bg2: #f8faf9;
+    --bg3: #f0f7f3;
+    --border: #d4e6da;
+    --text: #1a2e24;
+    --muted: #5a7a66;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', 'Segoe UI', sans-serif; line-height: 1.6; }
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* NAV */
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 6%; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; }
+  .nav-logo { font-size: 1.2rem; font-weight: 700; color: var(--green); letter-spacing: -0.5px; }
+  .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; }
+  .nav-links a { color: var(--muted); }
+  .nav-links a:hover { color: var(--green); text-decoration: none; }
+  .nav-cta { background: var(--green); color: #fff; padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem; }
+  .nav-cta:hover { background: var(--green-dark); text-decoration: none; color: #fff; }
+
+  /* REUTERS BANNER */
+  .reuters-banner { background: #fffbeb; border-top: 1px solid #d4aa00; border-bottom: 1px solid #d4aa00; padding: 0.75rem 6%; display: flex; align-items: center; gap: 1rem; font-size: 0.85rem; }
+  .reuters-tag { background: #c9a800; color: #000; font-weight: 700; font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 3px; white-space: nowrap; letter-spacing: 0.5px; }
+  .reuters-text { color: #7a6000; }
+  .reuters-text a { color: #5a4500; font-weight: 600; }
+  .reuters-text a:hover { color: #000; }
+
+  /* HERO */
+  .hero { padding: 5rem 6% 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1200px; margin: 0 auto; }
+  @media(max-width:800px){ .hero { grid-template-columns: 1fr; } }
+  .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--green-light); border: 1px solid var(--border); color: var(--green); font-size: 0.78rem; font-weight: 700; padding: 0.3rem 0.9rem; border-radius: 20px; margin-bottom: 1.5rem; letter-spacing: 0.5px; }
+  .hero-badge::before { content: '●'; font-size: 0.6rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.15; letter-spacing: -1px; color: var(--text); margin-bottom: 1.5rem; }
+  h1 em { color: var(--green); font-style: italic; }
+  .hero-sub { font-size: 1.05rem; color: var(--muted); max-width: 520px; margin-bottom: 2rem; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.5rem; }
+  .pill { background: var(--bg3); border: 1px solid var(--border); color: var(--text); font-size: 0.82rem; padding: 0.35rem 0.9rem; border-radius: 20px; }
+  .pill-green { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { background: var(--green); color: #fff; font-weight: 700; padding: 0.85rem 1.8rem; border-radius: 8px; font-size: 1rem; display: inline-block; }
+  .btn-primary:hover { background: var(--green-dark); text-decoration: none; color: #fff; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); font-weight: 600; padding: 0.85rem 1.8rem; border-radius: 8px; font-size: 1rem; display: inline-block; }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); text-decoration: none; }
+
+  /* DEMO WIDGET */
+  .demo-widget { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(26,92,58,0.08); }
+  .demo-header { background: var(--green); padding: 0.9rem 1.2rem; display: flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; color: rgba(255,255,255,0.9); font-weight: 600; }
+  .demo-dot { width: 8px; height: 8px; border-radius: 50%; background: #86efac; animation: pulse 2s infinite; }
+  .demo-messages { padding: 1.2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .msg { display: flex; flex-direction: column; gap: 0.2rem; }
+  .msg-guest { align-items: flex-end; }
+  .msg-bubble { padding: 0.6rem 1rem; border-radius: 12px; font-size: 0.88rem; max-width: 85%; }
+  .msg-guest .msg-bubble { background: #fff; border: 1px solid var(--border); color: var(--text); border-radius: 12px 12px 2px 12px; }
+  .msg-bot .msg-bubble { background: var(--green); color: #fff; border-radius: 12px 12px 12px 2px; }
+  .msg-meta { font-size: 0.72rem; color: var(--muted); }
+  .demo-input { border-top: 1px solid var(--border); padding: 0.8rem 1.2rem; }
+  .demo-input input { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.85rem; color: var(--muted); outline: none; font-family: inherit; }
+
+  /* STATS */
+  .stats-bar { display: flex; flex-wrap: wrap; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); }
+  .stat { flex: 1; min-width: 120px; padding: 1.5rem 2rem; text-align: center; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--green); }
+  .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* SECTIONS */
+  section { padding: 5rem 6%; }
+  section:nth-child(even) { background: var(--bg2); }
+  .section-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; color: var(--green-mid); text-transform: uppercase; margin-bottom: 0.8rem; }
+  h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 1rem; }
+  .section-intro { color: var(--muted); font-size: 1.05rem; max-width: 640px; margin-bottom: 3rem; }
+
+  /* CARDS */
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.8rem; transition: border-color 0.2s, box-shadow 0.2s; }
+  .card:hover { border-color: var(--green); box-shadow: 0 2px 12px rgba(26,92,58,0.08); }
+  .card-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+  .card h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+  .card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* COST */
+  .cost-table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+  .cost-table tr { border-bottom: 1px solid var(--border); }
+  .cost-table td { padding: 1rem 0.5rem; font-size: 0.95rem; }
+  .cost-table td:last-child { text-align: right; font-weight: 600; }
+  .cost-highlight { color: var(--green); font-size: 1.1rem; }
+  .cost-muted { color: var(--muted); font-size: 0.88rem; }
+  .breakeven { background: var(--green-light); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; font-size: 0.9rem; color: var(--green); margin-top: 1rem; font-weight: 600; }
+
+  /* TARGETS */
+  .target-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.8rem; transition: border-color 0.2s; }
+  .target-card:hover { border-color: var(--green); }
+  .target-card h3 { font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--green-mid); margin-bottom: 0.4rem; }
+  .target-card h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; }
+  .target-card p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag { background: var(--bg3); border: 1px solid var(--border); font-size: 0.75rem; color: var(--muted); padding: 0.25rem 0.6rem; border-radius: 4px; }
+
+  /* PROCESS */
+  .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+  .step-num { font-size: 2.5rem; font-weight: 800; color: var(--green-light); line-height: 1; margin-bottom: 0.5rem; -webkit-text-stroke: 2px var(--border); }
+  .step h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .step p { font-size: 0.85rem; color: var(--muted); }
+
+  /* CASE STUDY */
+  .case-study { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  @media(max-width:700px){ .case-study { grid-template-columns: 1fr; } }
+
+  /* PRICING */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+  .price-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+  .price-card.featured { border-color: var(--green); border-width: 2px; }
+  .price-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .price-title { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 0.3rem; }
+  .price-amount { font-size: 2.2rem; font-weight: 800; color: var(--green); margin: 0.8rem 0 0.2rem; }
+  .price-amount span { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+  .price-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.2rem; }
+  .price-features { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .price-features li { font-size: 0.85rem; color: var(--text); display: flex; gap: 0.5rem; }
+  .price-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .price-btn { display: block; text-align: center; padding: 0.8rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
+  .price-btn-primary { background: var(--green); color: #fff; }
+  .price-btn-primary:hover { background: var(--green-dark); text-decoration: none; color: #fff; }
+  .price-btn-secondary { border: 1px solid var(--border); color: var(--text); }
+  .price-btn-secondary:hover { border-color: var(--green); color: var(--green); text-decoration: none; }
+  .featured-tag { background: var(--green); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+
+  /* ABOUT */
+  .about-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; }
+  @media(max-width:700px){ .about-grid { grid-template-columns: 1fr; } }
+  .cred { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; }
+  .about-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+  .highlight { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+  .highlight h4 { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+  .highlight p { font-size: 0.78rem; color: var(--muted); }
+
+  /* CTA */
+  .cta-section { background: var(--green) !important; text-align: center; padding: 6rem 6%; }
+  .cta-section .section-tag { color: rgba(255,255,255,0.6); }
+  .cta-section h2 { color: #fff; margin-bottom: 1rem; }
+  .cta-section p { color: rgba(255,255,255,0.75); margin-bottom: 2.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .cta-cards { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .cta-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 2rem; width: 260px; text-align: left; backdrop-filter: blur(4px); }
+  .cta-card h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+  .cta-card p { font-size: 0.82rem; color: rgba(255,255,255,0.7); margin-bottom: 1.2rem; }
+  .btn-white { background: #fff; color: var(--green); font-weight: 700; padding: 0.7rem 1.2rem; border-radius: 8px; display: block; text-align: center; }
+  .btn-white:hover { background: var(--bg3); text-decoration: none; color: var(--green); }
+  .btn-outline-white { border: 1px solid rgba(255,255,255,0.4); color: #fff; font-weight: 600; padding: 0.7rem 1.2rem; border-radius: 8px; display: block; text-align: center; }
+  .btn-outline-white:hover { border-color: #fff; text-decoration: none; color: #fff; }
+  .dsgvo-note { font-size: 0.78rem; color: rgba(255,255,255,0.5); }
+
+  /* ── VORGEHEN SECTION (dark break) ── */
+  #vorgehen {
+    background: #0a0e0f;
+    padding: 0;
+  }
+  .v-vorgehen {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 6% 120px;
+  }
+  .v-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font-family: 'Syne', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #00c4a7;
+    margin-bottom: 1.4rem;
+  }
+  .v-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: #00c4a7;
+  }
+  .v-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    max-width: 700px;
+    margin-bottom: 1.2rem;
+    color: #e4eded;
+    letter-spacing: -0.5px;
+  }
+  .v-title-line {
+    display: block;
+    line-height: 1.0;
+    margin-bottom: 0.45em;
+  }
+  .v-title-line:last-child {
+    margin-bottom: 0;
+  }
+  .v-title-accent {
+    color: #00c4a7;
+  }
+  .v-lead {
+    font-size: 1.08rem;
+    color: #7a9090;
+    max-width: 640px;
+    margin-bottom: 4rem;
+    font-weight: 300;
+  }
+  .v-lead strong {
+    color: #e4eded;
+    font-weight: 500;
+  }
+  .v-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5px;
+    background: rgba(0,196,167,.18);
+    border: 1.5px solid rgba(0,196,167,.18);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .v-step {
+    background: #0f1517;
+    padding: 2.6rem 2.4rem 2.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: background .3s ease;
+  }
+  .v-step:hover { background: #111a1c; }
+  .v-step-num {
+    position: absolute;
+    top: -1.2rem;
+    right: 1.4rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 4.5rem;
+    font-weight: 800;
+    color: rgba(0,196,167,.07);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    transition: color .3s ease;
+  }
+  .v-step:hover .v-step-num { color: rgba(0,196,167,.13); }
+  .v-step-tag {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: .67rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #00c4a7;
+    background: rgba(0,196,167,.12);
+    border: 1px solid rgba(0,196,167,.18);
+    border-radius: 4px;
+    padding: .25em .7em;
+    margin-bottom: 1.4rem;
+  }
+  .v-step h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: .9rem;
+    line-height: 1.3;
+    color: #e4eded;
+  }
+  .v-step p {
+    font-size: .96rem;
+    color: #9ab4b4;
+    font-weight: 300;
+    line-height: 1.75;
+  }
+  .v-step p strong { color: #e4eded; font-weight: 500; }
+  .v-step::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: #00c4a7;
+    transition: width .4s ease;
+  }
+  .v-step:hover::after { width: 100%; }
+  .v-callout {
+    margin-top: 3rem;
+    border: 1.5px solid rgba(0,196,167,.18);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0,196,167,.06) 0%, rgba(0,196,167,.02) 100%);
+    padding: 2rem 2.4rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.4rem;
+  }
+  .v-callout-icon {
+    flex-shrink: 0;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(0,196,167,.12);
+    border: 1.5px solid rgba(0,196,167,.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+  .v-callout-body p {
+    font-size: .95rem;
+    color: #7a9090;
+    font-weight: 300;
+  }
+  .v-callout-body p strong { color: #e4eded; font-weight: 500; }
+  .v-callout-body p em { font-style: italic; color: #00c4a7; }
+  @media (max-width: 700px) {
+    .v-steps { grid-template-columns: 1fr; }
+    .v-callout { flex-direction: column; gap: 1rem; }
+    .v-vorgehen { padding: 64px 1.2rem 80px; }
+  }
+
+  /* FOOTER */
+  footer { background: var(--text); padding: 2rem 6%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+  .footer-logo { font-weight: 700; color: #fff; }
+  .footer-logo span { color: #86efac; }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { color: rgba(255,255,255,0.5); }
+  .footer-links a:hover { color: #fff; text-decoration: none; }
+  .footer-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); padding: 0.3rem 0.8rem; border-radius: 4px; font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">autark-AI</div>
+  <div class="nav-links">
+    <a href="#why">Vorteile</a>
+    <a href="#costs">Kosten</a>
+    <a href="#targets">Branchen</a>
+    <a href="#vorgehen">Vorgehen</a>
+    <a href="#case">Case Study</a>
+    <a href="#pricing">Preise</a>
+  </div>
+  <a href="#contact" class="nav-cta">Demo anfragen</a>
+</nav>
+
+<!-- REUTERS BANNER -->
+<div class="reuters-banner">
+  <span class="reuters-tag">REUTERS</span>
+  <span class="reuters-text">
+    US-Diplomaten sollen aktiv gegen Datensouveränitätsgesetze kämpfen — DSGVO als „unnötig belastend" eingestuft.
+    <a href="https://www.reuters.com/sustainability/boards-policy-regulation/us-orders-diplomats-fight-data-sovereignty-initiatives-2026-02-25/" target="_blank" rel="noopener">Zum Artikel →</a>
+    <span style="margin-left:0.5rem;color:#a08020;">Genau deshalb: lokal by Design.</span>
+  </span>
+</div>
+
+<!-- HERO -->
+<div style="background:var(--bg);padding:0 6%;">
+  <div class="hero">
+    <div>
+      <div class="hero-badge">PRODUKTIV IM ECHTBETRIEB</div>
+      <h1>On-Premise KI für<br><em>regulierte<br>Branchen</em></h1>
+      <p class="hero-sub">DSGVO-konforme Chatbots und Wissensmanagement – lokal auf Ihrer Hardware, ohne Cloud-Abhängigkeit. 15+ Jahre Enterprise-Architektur. Jetzt lokal.</p>
+      <div class="hero-pills">
+        <span class="pill pill-green">DSGVO by Design</span>
+        <span class="pill pill-green">Keine Cloud</span>
+        <span class="pill pill-green">Kein Vendor-Lock-in</span>
+        <span class="pill">Einmalkosten</span>
+      </div>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Live-Demo vereinbaren →</a>
+        <a href="#targets" class="btn-secondary">Für meine Branche</a>
+      </div>
+    </div>
+    <div class="demo-widget">
+      <div class="demo-header">
+        <div class="demo-dot"></div>
+        borgo-bot — lokal aktiv
+      </div>
+      <div class="demo-messages">
+        <div class="msg msg-guest">
+          <div class="msg-bubble">Wie funktioniert der Pizzaofen?</div>
+          <div class="msg-meta">Gast · gerade eben</div>
+        </div>
+        <div class="msg msg-bot">
+          <div class="msg-bubble">Der Pizzaofen liegt auf der Terrasse. Holz anzünden und ca. 45 Min. vorheizen, bis die Kuppel weiß wird. Glut zur Seite – Pizza direkt auf den Stein.</div>
+          <div class="msg-meta">Borgo-Bot · 2.3s · lokal verarbeitet</div>
+        </div>
+        <div class="msg msg-guest">
+          <div class="msg-bubble">Gibt es WLAN?</div>
+          <div class="msg-meta">Gast · gerade eben</div>
+        </div>
+        <div class="msg msg-bot">
+          <div class="msg-bubble">Ja! WLAN-Passwort auf der Willkommenskarte im Eingang. Netzwerk: BorgoBatone_Guest</div>
+          <div class="msg-meta">Borgo-Bot · 1.8s · lokal verarbeitet</div>
+        </div>
+      </div>
+      <div class="demo-input">
+        <input type="text" placeholder="Ihre Frage…" disabled>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">&lt;60s</div><div class="stat-label">Antwortzeit lokal</div></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">DSGVO-konform</div></div>
+  <div class="stat"><div class="stat-num">0</div><div class="stat-label">externe API-Calls</div></div>
+  <div class="stat"><div class="stat-num">0€</div><div class="stat-label">laufende API-Kosten</div></div>
+</div>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-tag">LOKAL · DSGVO · KEIN VENDOR-LOCK-IN</div>
+  <h2>Warum lokale KI für regulierte Branchen die richtige Wahl ist</h2>
+  <p class="section-intro">Cloud-KI ist praktisch – aber für Steuerberater, Anwälte und die Verwaltung ist sie ein kalkuliertes rechtliches Risiko. autark-AI schließt dieses Risiko strukturell aus.</p>
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-icon">🔒</div>
+      <h3>Lokal gehostet</h3>
+      <p>Ihre KI läuft auf Ihrer eigenen Hardware – im Büro oder Rechenzentrum in Deutschland. Keine einzige Anfrage verlässt Ihr Netzwerk. Vollständige Datenkontrolle.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🇩🇪</div>
+      <h3>DSGVO by Design</h3>
+      <p>DSGVO Art. 28 greift nicht – es gibt keinen Auftragsverarbeiter. Kein US Cloud Act. Vollständig auditierbar auf Ihren Systemen. Kein Behördenzugriff möglich.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔓</div>
+      <h3>Kein Vendor-Lock-in</h3>
+      <p>Open-Source-Modelle (Mistral 7B, Llama 3.2) – vollständig transparent. Kein Black-Box-Verhalten. Sie sind technisch und rechtlich Eigentümer Ihrer KI.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>Enterprise-Erfahrung</h3>
+      <p>Entwickelt von einem SAP Senior Consultant mit 15+ Jahren Erfahrung in regulierten Umgebungen. Kein Startup-Experiment – praxiserprobte Architektur.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COSTS -->
+<section id="costs">
+  <div class="section-tag">TRANSPARENTE KOSTENSTRUKTUR</div>
+  <h2>Einmal eingerichtet. Keine laufenden Kosten.</h2>
+  <p class="section-intro">Cloud-KI skaliert ihre Kosten mit Ihrem Team. autark-AI nicht. Egal ob 5 oder 50 Mitarbeiter – Ihre Lösung bleibt kostenstabil.</p>
+  <table class="cost-table">
+    <tr>
+      <td>Microsoft Copilot <span class="cost-muted">(5 User × €360/Jahr × 3 Jahre)</span></td>
+      <td style="color:#dc2626">€5.400</td>
+    </tr>
+    <tr>
+      <td>ChatGPT Teams <span class="cost-muted">(5 User × €300/Jahr × 3 Jahre)</span></td>
+      <td style="color:#dc2626">€4.500</td>
+    </tr>
+    <tr>
+      <td>autark-AI <span class="cost-muted">(Einmalige Implementierung)</span></td>
+      <td class="cost-highlight">€2.500</td>
+    </tr>
+    <tr>
+      <td>autark-AI – laufende Kosten/Monat</td>
+      <td class="cost-highlight">€0</td>
+    </tr>
+  </table>
+  <div class="breakeven">⚡ Break-even gegenüber Microsoft Copilot: nach ~7 Monaten</div>
+</section>
+
+<!-- TARGETS -->
+<section id="targets">
+  <div class="section-tag">ZIELGRUPPEN</div>
+  <h2>Konzipiert für regulierte Umgebungen</h2>
+  <p class="section-intro">Jede Branche hat eigene Compliance-Anforderungen. autark-AI ist von Anfang an darauf ausgelegt – nicht nachträglich angepasst.</p>
+  <div class="grid-3">
+    <div class="target-card">
+      <h3>Steuerberatung</h3>
+      <h4>Kanzlei-Assistent mit Berufsgeheimnis</h4>
+      <p>§ 203 StGB macht Cloud-KI zur Haftungsfalle. DATEV-Ergänzung statt Ersatz – Mandantenanfragen automatisiert, kein Wort in die Cloud.</p>
+      <div class="tags"><span class="tag">Mandanten-FAQ</span><span class="tag">Fristen-Checklisten</span><span class="tag">Wissensmanagement</span></div>
+    </div>
+    <div class="target-card">
+      <h3>Rechtsanwälte</h3>
+      <h4>Wissensmanagement für Präzedenzfälle</h4>
+      <p>Mandantengeheimnis erfordert lokale Lösungen. Interne Recherche auf Basis Ihrer eigenen Akten. Spezialisierte Wissensdatenbank für Ihr Rechtsgebiet.</p>
+      <div class="tags"><span class="tag">Präzedenzfall-DB</span><span class="tag">Fristenkontrolle</span><span class="tag">Mandanten-Self-Service</span></div>
+    </div>
+    <div class="target-card">
+      <h3>Öffentliche Verwaltung</h3>
+      <h4>Digitale Souveränität für Kommunen</h4>
+      <p>Politisch gewollt, technisch sauber, EU-Fördermittel-kompatibel. Bürgeranfragen effizient bearbeiten – ohne Abhängigkeit von US-Anbietern.</p>
+      <div class="tags"><span class="tag">Bürger-FAQ</span><span class="tag">Internes Wissen</span><span class="tag">EU-konform</span></div>
+    </div>
+    <div class="target-card">
+      <h3>Gesundheitswesen</h3>
+      <h4>Patientenkommunikation ohne Risiko</h4>
+      <p>Terminabsagen, Rezeptanfragen, Befundstatus automatisieren – Patientendaten verlassen kein Krankenhaus, keine Praxis.</p>
+      <div class="tags"><span class="tag">Terminmanagement</span><span class="tag">Rezeptanfragen</span><span class="tag">DSGVO-nativ</span></div>
+    </div>
+    <div class="target-card">
+      <h3>Mittelstand</h3>
+      <h4>Wissensmanagement für SAP-Umgebungen</h4>
+      <p>Prozessdokumentation, Qualitätsmanagement, interne Schulungsunterlagen – KI-gestützt zugänglich, ohne Betriebsgeheimnisse zu gefährden.</p>
+      <div class="tags"><span class="tag">SAP-Integration</span><span class="tag">QM-Dokumentation</span><span class="tag">Schulung</span></div>
+    </div>
+    <div class="target-card">
+      <h3>Hospitality</h3>
+      <h4>Gäste-Chatbot – 50x dieselbe Frage? Nie wieder.</h4>
+      <p>Lokaler Wissens-Chatbot beantwortet Gästefragen rund um die Uhr – live im Einsatz seit Saison 2024 in der Toskana.</p>
+      <div class="tags"><span class="tag">Check-in/out</span><span class="tag">Lokale Empfehlungen</span><span class="tag">24/7 Support</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- VORGEHEN -->
+<section id="vorgehen">
+  <div class="v-vorgehen">
+    <span class="v-eyebrow">Unser Vorgehen</span>
+    <div class="v-title">
+      <div class="v-title-line">Bevor wir einen Server aufsetzen,</div>
+      <div class="v-title-line">erörtern wir:</div>
+      <div class="v-title-line v-title-accent">Wo lebt Ihr Wissen?</div>
+    </div>
+    <p class="v-lead">
+      Die meisten KI-Projekte scheitern <strong>nicht an der Technologie</strong> —
+      sie scheitern davor. Denn Modelle sind nur so gut wie die Daten,
+      auf denen sie aufgebaut werden.
+    </p>
+    <div class="v-steps">
+      <div class="v-step">
+        <span class="v-step-num">01</span>
+        <span class="v-step-tag">Schritt 1</span>
+        <h3>Daten sichtbar machen</h3>
+        <p>Ihre Informationen stecken in PDFs, eingescannten Akten oder proprietären Systemen.
+          Menschen lesen sie — Modelle nicht. Wir helfen Ihnen, diesen Bestand zu extrahieren,
+          zu bereinigen und <strong>maschinell nutzbar zu machen</strong>.
+          Das ist oft mehr Arbeit als die KI-Lösung selbst — und der entscheidende Schritt.</p>
+      </div>
+      <div class="v-step">
+        <span class="v-step-num">02</span>
+        <span class="v-step-tag">Schritt 2</span>
+        <h3>Erfahrungswissen strukturieren</h3>
+        <p>Ihr bester Mitarbeiter weiß, wie ein Fall richtig bewertet wird.
+          Aber es steht nirgendwo geschrieben. Wir begleiten Sie dabei, dieses
+          <strong>implizite Wissen</strong> in strukturierte, lernbare Formate zu überführen —
+          ohne den laufenden Betrieb zu stören. Kein Tooling-Problem. Ein organisatorisches.</p>
+      </div>
+      <div class="v-step">
+        <span class="v-step-num">03</span>
+        <span class="v-step-tag">Schritt 3</span>
+        <h3>Die passende Lösung — bei Ihnen</h3>
+        <p>Erst wenn Ihre Datenbasis steht, richten wir das Modell ein:
+          <strong>lokal, DSGVO-konform, ohne Cloud-Abhängigkeit</strong>.
+          Kein Vendor Lock-in. Keine monatlichen API-Kosten.
+          Die Infrastruktur folgt dem Wissen — nicht umgekehrt.</p>
+      </div>
+    </div>
+    <div class="v-callout">
+      <div class="v-callout-icon">💡</div>
+      <div class="v-callout-body">
+        <p><strong>Die meisten Anbieter überspringen Schritt 1 und 2.</strong>
+          Sie verkaufen Ihnen einen Server — und lassen Sie mit den eigentlichen Fragen allein.
+          Wir fangen dort an, wo es wirklich zählt:
+          <em>bei Ihrer Datenbasis, nicht bei unserer Infrastruktur.</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-tag">IMPLEMENTIERUNGSPROZESS</div>
+  <h2>Von der Anfrage zur produktiven KI in 4 Wochen</h2>
+  <p class="section-intro">Kein endloses Consulting-Projekt. Strukturiertes Vorgehen mit klaren Meilensteinen und Fixpreisen.</p>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Bedarfsanalyse</h3>
+      <p>60 Minuten: Welche Prozesse kosten Ihr Team die meiste Zeit? Wir analysieren konkrete Use Cases – keine generischen Demos.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Hardware & Setup</h3>
+      <p>Installation auf vorhandener Hardware oder Empfehlung geeigneter Server. Alles in Ihrem Netzwerk. Kein Cloud-Account erforderlich.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Wissensbasis aufbauen</h3>
+      <p>Ihre Dokumente, Prozesse und FAQs werden eingespeist. Der Chatbot lernt Ihr Unternehmen – nicht irgendeinen generischen Datensatz.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>Pilotbetrieb & Übergabe</h3>
+      <p>4-wöchiger Pilotbetrieb mit Begleitung. Messbarer ROI. Danach vollständige Übergabe – Sie sind unabhängig von uns.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDY -->
+<section id="case">
+  <div class="section-tag">CASE STUDY</div>
+  <h2>Borgo Batone: 50 Fragen. Ein Chatbot.</h2>
+  <div class="case-study">
+    <div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;">Feriengenossenschaft, Toskana — 100 Mitglieder, 200–250 Gäste pro Saison</p>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+        <div><div class="stat-num" style="font-size:2rem">50×</div><div class="stat-label">dieselbe Frage pro Saison</div></div>
+        <div><div class="stat-num" style="font-size:2rem">&lt;60s</div><div class="stat-label">Antwortzeit lokal</div></div>
+        <div><div class="stat-num" style="font-size:2rem">8+</div><div class="stat-label">Monate produktiv</div></div>
+        <div><div class="stat-num" style="font-size:2rem">0</div><div class="stat-label">externe API-Calls</div></div>
+      </div>
+    </div>
+    <div class="demo-widget">
+      <div class="demo-header">
+        <div class="demo-dot"></div>
+        BORGO-BOT · LOKAL · AKTIV
+      </div>
+      <div class="demo-messages">
+        <div class="msg msg-guest">
+          <div class="msg-bubble">Wie funktioniert der Pizzaofen?</div>
+        </div>
+        <div class="msg msg-bot">
+          <div class="msg-bubble">Der Pizzaofen liegt auf der Terrasse. Holz anzünden, 45 Min. vorheizen bis die Kuppel weiß wird. Dann Glut zur Seite und Pizza direkt auf den Stein.</div>
+          <div class="msg-meta" style="color:rgba(255,255,255,0.5)">Borgo-Bot · 2.3s · lokal verarbeitet</div>
+        </div>
+        <div class="msg msg-guest">
+          <div class="msg-bubble">Wann ist Check-out?</div>
+        </div>
+        <div class="msg msg-bot">
+          <div class="msg-bubble">Check-out ist bis 10:00 Uhr. Schlüssel bitte im Schlüsselkasten am Eingang hinterlassen.</div>
+          <div class="msg-meta" style="color:rgba(255,255,255,0.5)">Borgo-Bot · 1.5s · lokal verarbeitet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-tag">TRANSPARENTE PREISE</div>
+  <h2>Fixpreise. Keine versteckten Kosten.</h2>
+  <p class="section-intro">Bezahlte Pilotprojekte statt kostenloser Demos. Wir glauben an messbaren ROI – deshalb steigen wir mit einem klar definierten Pilotprojekt ein.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-label">EINSTIEG</div>
+      <div class="price-title">Pilot-Projekt</div>
+      <div class="price-amount">€1.200 <span>einmalig</span></div>
+      <div class="price-desc">4 Wochen · Fixpreis · einmalig</div>
+      <ul class="price-features">
+        <li>Bedarfsanalyse & Use-Case-Definition</li>
+        <li>Installation auf Ihrer Hardware</li>
+        <li>1 Wissensdatenbank / Anwendungsfall</li>
+        <li>4 Wochen begleiteter Betrieb</li>
+        <li>ROI-Messung & Ergebnisbericht</li>
+      </ul>
+      <a href="#contact" class="price-btn price-btn-secondary">Anfragen</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-label">EMPFOHLEN <span class="featured-tag">BELIEBT</span></div>
+      <div class="price-title">Vollimplementierung</div>
+      <div class="price-amount">€2.500 <span>einmalig</span></div>
+      <div class="price-desc">Steuerberater / Anwälte · keine Folgekosten</div>
+      <ul class="price-features">
+        <li>Alles aus Pilot inklusive</li>
+        <li>DSGVO-Compliance-Check</li>
+        <li>Branchen-spezifische Templates</li>
+        <li>DATEV / SAP Anbindung möglich</li>
+        <li>Prioritäts-Support</li>
+        <li>Schulung Ihres Teams</li>
+      </ul>
+      <a href="#contact" class="price-btn price-btn-primary">Demo vereinbaren</a>
+    </div>
+    <div class="price-card">
+      <div class="price-label">ENTERPRISE</div>
+      <div class="price-title">Individuelle Lösung</div>
+      <div class="price-amount">ab €5.000 <span>auf Anfrage</span></div>
+      <div class="price-desc">Individuell kalkuliert · mehrere Standorte</div>
+      <ul class="price-features">
+        <li>Compliance-Assessment</li>
+        <li>Mehrere Anwendungsfälle & Standorte</li>
+        <li>Integration in bestehende Systeme</li>
+        <li>SLA & dedizierter Support</li>
+        <li>Interne Dokumentation auf Deutsch</li>
+      </ul>
+      <a href="#contact" class="price-btn price-btn-secondary">Anfragen</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">ÜBER autark-AI</div>
+  <h2>Enterprise-Erfahrung. Mittelstand-Lösungen.</h2>
+  <div class="about-grid">
+    <div>
+      <div class="cred">15+ Jahre SAP/IT-Consulting</div>
+      <div class="cred">Senior Quality Consultant</div>
+      <div class="cred">DSGVO-Spezialist</div>
+      <div class="cred">Enterprise-Architektur</div>
+      <div class="cred">DACH-Markt</div>
+    </div>
+    <div>
+      <p style="color:var(--muted);font-size:1rem;line-height:1.8;margin-bottom:1.5rem;">autark-AI wurde gegründet, weil ich als SAP Senior Consultant immer wieder dasselbe erlebt habe: Unternehmen wollen KI nutzen – aber nicht um den Preis ihrer Datensouveränität. Das ist keine Marketing-Botschaft. Es ist meine Überzeugung.</p>
+      <div class="about-highlights">
+        <div class="highlight">
+          <h4>🏗️ Produktiv seit 8+ Monaten</h4>
+          <p>Borgo-Bot läuft seit Saison 2024 im Echtbetrieb – kein Demo-System.</p>
+        </div>
+        <div class="highlight">
+          <h4>⚡ Performance-Optimierung</h4>
+          <p>Antwortzeiten von 120s auf unter 60s reduziert durch Async Workers.</p>
+        </div>
+        <div class="highlight">
+          <h4>🛡️ Datensouveränität als Überzeugung</h4>
+          <p>Nicht Cloud-first mit Datenschutz-Patch – lokal by Design.</p>
+        </div>
+        <div class="highlight">
+          <h4>🔧 Kein KI-Personal nötig</h4>
+          <p>Setup & Support durch uns. Kein Recruiting für KI-Expertise erforderlich.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" class="cta-section">
+  <div class="section-tag">ERSTGESPRÄCH</div>
+  <h2>Bereit für KI, die Ihnen gehört?</h2>
+  <p>60 Minuten Erstgespräch. Wir analysieren Ihre konkrete Situation, besprechen realistische Use Cases und zeigen, ob lokale KI für Sie sinnvoll ist. Ehrliche Beratung – kein Sales-Pitch.</p>
+  <div class="cta-cards">
+    <div class="cta-card">
+      <h3>📅 Termin vereinbaren</h3>
+      <p>30–60 Minuten kostenlose Beratung. Wir besprechen Ihren Use-Case und prüfen, ob autark-AI für Sie passt.</p>
+      <a href="/cdn-cgi/l/email-protection#91f9f0fdfdfed1f0e4e5f0e3fabcd0d8bff5f4" class="btn-white">Termin buchen →</a>
+    </div>
+    <div class="cta-card">
+      <h3>📧 Projektanfrage</h3>
+      <p>Beschreiben Sie kurz Ihr Projekt. Wir melden uns innerhalb von 24 Stunden mit einer ersten Einschätzung.</p>
+      <a href="/cdn-cgi/l/email-protection#7b131a1717143b1a0e0f1a0910563a32551f1e" class="btn-outline-white">E-Mail senden →</a>
+    </div>
+  </div>
+  <div class="dsgvo-note">🔒 Ihre Anfrage unterliegt der DSGVO und wird vertraulich behandelt.</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">autark<span>-ai</span>.de</div>
+  <div class="footer-links">
+    <a href="#">Impressum</a>
+    <a href="#">Datenschutz</a>
+  </div>
+  <div style="display:flex;gap:0.6rem;">
+    <span class="footer-badge">🔒 Hosted in Germany</span>
+    <span class="footer-badge">No Cloud</span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></scrip

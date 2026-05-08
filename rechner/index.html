@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud-Risiko-Rechner | autark-AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0e14;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      cursor: pointer;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      transition: transform 0.15s ease;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-in {
+      animation: slideIn 0.4s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+  <div id="rechner-root"></div>
+  
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // Tooltip-Komponente
+    const Tooltip = ({ text, formula, children }) => {
+      const [show, setShow] = useState(false);
+      
+      return (
+        <span 
+          style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          onMouseEnter={() => setShow(true)}
+          onMouseLeave={() => setShow(false)}
+        >
+          {children}
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '16px',
+            height: '16px',
+            borderRadius: '50%',
+            background: 'rgba(96, 165, 250, 0.2)',
+            color: '#60a5fa',
+            fontSize: '10px',
+            fontWeight: '700',
+            cursor: 'help',
+            flexShrink: 0,
+          }}>?</span>
+          
+          {show && (
+            <div style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              marginBottom: '8px',
+              padding: '12px 14px',
+              background: '#1e293b',
+              border: '1px solid rgba(96, 165, 250, 0.3)',
+              borderRadius: '10px',
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
+              zIndex: 100,
+              width: '280px',
+              pointerEvents: 'none',
+            }}>
+              <div style={{ fontSize: '12px', color: '#e2e8f0', marginBottom: '8px', lineHeight: '1.5' }}>
+                {text}
+              </div>
+              {formula && (
+                <div style={{
+                  fontSize: '11px',
+                  fontFamily: 'monospace',
+                  color: '#60a5fa',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  padding: '8px 10px',
+                  borderRadius: '6px',
+                  whiteSpace: 'pre-wrap',
+                }}>
+                  {formula}
+                </div>
+              )}
+              <div style={{
+                position: 'absolute',
+                bottom: '-6px',
+                left: '50%',
+                transform: 'translateX(-50%) rotate(45deg)',
+                width: '12px',
+                height: '12px',
+                background: '#1e293b',
+                borderRight: '1px solid rgba(96, 165, 250, 0.3)',
+                borderBottom: '1px solid rgba(96, 165, 250, 0.3)',
+              }} />
+            </div>
+          )}
+        </span>
+      );
+    };
+
+    const CloudAvoidanceRechner = () => {
+      const [branche, setBranche] = useState('steuerberater');
+      const [mitarbeiter, setMitarbeiter] = useState(15);
+      const [jahresumsatz, setJahresumsatz] = useState(500000);
+      const [anfragenProMonat, setAnfragenProMonat] = useState(200);
+      const [showResults, setShowResults] = useState(false);
+
+      const branchenDaten = {
+        steuerberater: {
+          label: 'Steuerberatung / WP',
+          icon: '📊',
+          risikoFaktor: 1.2,
+          berufsgeheimnis: '§ 203 StGB',
+          cloudRisikoText: 'Steuergeheimnisse auf US-Servern = Berufsrechtsverletzung',
+          bussgeldfaktor: 0.04,
+        },
+        anwalt: {
+          label: 'Rechtsanwaltskanzlei',
+          icon: '⚖️',
+          risikoFaktor: 1.3,
+          berufsgeheimnis: '§ 203 StGB',
+          cloudRisikoText: 'Mandantengeheimnisse unterliegen US Cloud Act',
+          bussgeldfaktor: 0.04,
+        },
+        arzt: {
+          label: 'Arztpraxis / MVZ',
+          icon: '🏥',
+          risikoFaktor: 1.4,
+          berufsgeheimnis: '§ 203 StGB',
+          cloudRisikoText: 'Patientendaten = höchste Schutzklasse',
+          bussgeldfaktor: 0.04,
+        },
+        verwaltung: {
+          label: 'Öffentliche Verwaltung',
+          icon: '🏛️',
+          risikoFaktor: 1.1,
+          berufsgeheimnis: 'Amtsgeheimnis',
+          cloudRisikoText: 'Bürgerdaten + digitale Souveränität = politisch brisant',
+          bussgeldfaktor: 0.02,
+        },
+        kmu: {
+          label: 'KMU / Mittelstand',
+          icon: '🏭',
+          risikoFaktor: 0.9,
+          berufsgeheimnis: 'Geschäftsgeheimnisse',
+          cloudRisikoText: 'Know-how und Kundendaten exponiert',
+          bussgeldfaktor: 0.04,
+        },
+      };
+
+      const ergebnis = useMemo(() => {
+        const b = branchenDaten[branche];
+        const maxBussgeld = jahresumsatz * b.bussgeldfaktor;
+        const risikogewichtetBussgeld = maxBussgeld * b.risikoFaktor * 0.15;
+        const cloudKostenProJahr = mitarbeiter * 30 * 12;
+        const onPremiseSetup = mitarbeiter <= 20 ? 2500 : mitarbeiter <= 50 ? 5000 : 10000;
+        const onPremiseBetrieb = mitarbeiter * 5 * 12;
+        const onPremiseGesamt = onPremiseSetup + onPremiseBetrieb;
+        const reputationsrisiko = jahresumsatz * 0.1 * b.risikoFaktor;
+        const cloudGesamtrisiko = risikogewichtetBussgeld + reputationsrisiko;
+        const ersparnis = cloudKostenProJahr + cloudGesamtrisiko - onPremiseGesamt;
+        const roiProzent = ((ersparnis / onPremiseGesamt) * 100).toFixed(0);
+        const amortisationMonate = Math.max(1, Math.round((onPremiseSetup / (cloudKostenProJahr / 12)) * 12));
+
+        return {
+          brancheDaten: b,
+          maxBussgeld,
+          risikogewichtetBussgeld,
+          cloudKostenProJahr,
+          onPremiseSetup,
+          onPremiseBetrieb,
+          onPremiseGesamt,
+          reputationsrisiko,
+          cloudGesamtrisiko,
+          ersparnis,
+          roiProzent,
+          amortisationMonate,
+        };
+      }, [branche, mitarbeiter, jahresumsatz, anfragenProMonat]);
+
+      const formatCurrency = (val) => 
+        new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
+
+      // Dynamische Tooltip-Texte mit aktuellen Werten
+      const tooltips = {
+        lizenzkosten: {
+          text: "Geschätzte Cloud-KI-Kosten basierend auf Microsoft 365 Copilot Preisen (~30€/User/Monat).",
+          formula: `${mitarbeiter} Mitarbeiter × 30€ × 12 Monate\n= ${formatCurrency(ergebnis.cloudKostenProJahr)}`
+        },
+        bussgeldrisiko: {
+          text: "DSGVO erlaubt bis 4% Jahresumsatz als Bußgeld. Gewichtet mit Branchenrisiko (×" + ergebnis.brancheDaten.risikoFaktor + ") und 15% Eintrittswahrscheinlichkeit.",
+          formula: `${formatCurrency(jahresumsatz)} × 4% × ${ergebnis.brancheDaten.risikoFaktor} × 15%\n= ${formatCurrency(ergebnis.risikogewichtetBussgeld)}`
+        },
+        reputationsrisiko: {
+          text: "Geschätzter Umsatzverlust bei Datenpanne: 10% des Jahresumsatzes, gewichtet nach Branchensensibilität.",
+          formula: `${formatCurrency(jahresumsatz)} × 10% × ${ergebnis.brancheDaten.risikoFaktor}\n= ${formatCurrency(ergebnis.reputationsrisiko)}`
+        },
+        setupKosten: {
+          text: "Einmalige Implementierungskosten für On-Premise KI. Staffelung nach Unternehmensgröße.",
+          formula: `≤20 MA: 2.500€\n21-50 MA: 5.000€\n>50 MA: 10.000€\n\nIhr Setup: ${formatCurrency(ergebnis.onPremiseSetup)}`
+        },
+        betriebskosten: {
+          text: "Laufende Wartung, Updates, Support. Ca. 5€ pro User pro Monat.",
+          formula: `${mitarbeiter} Mitarbeiter × 5€ × 12 Monate\n= ${formatCurrency(ergebnis.onPremiseBetrieb)}`
+        },
+        complianceRisiko: {
+          text: "Bei lokaler Datenhaltung: Keine Drittland-Übermittlung, kein Cloud Act, volle Kontrolle = kein Compliance-Risiko.",
+          formula: `Risiko = 0€\n(Daten verlassen nie Ihr Netzwerk)`
+        },
+        ersparnis: {
+          text: "Differenz zwischen Cloud-Gesamtrisiko und On-Premise-Kosten im ersten Jahr.",
+          formula: `Cloud: ${formatCurrency(ergebnis.cloudKostenProJahr + ergebnis.cloudGesamtrisiko)}\n- On-Prem: ${formatCurrency(ergebnis.onPremiseGesamt)}\n= ${formatCurrency(ergebnis.ersparnis)}`
+        },
+        roi: {
+          text: "Return on Investment: Wie viel Prozent der Investition sparen Sie im ersten Jahr?",
+          formula: `(${formatCurrency(ergebnis.ersparnis)} ÷ ${formatCurrency(ergebnis.onPremiseGesamt)}) × 100\n= ${ergebnis.roiProzent}%`
+        },
+        amortisation: {
+          text: "Nach wie vielen Monaten hat sich die Anfangsinvestition durch eingesparte Cloud-Kosten bezahlt gemacht?",
+          formula: `${formatCurrency(ergebnis.onPremiseSetup)} ÷ (${formatCurrency(ergebnis.cloudKostenProJahr)} ÷ 12)\n≈ ${ergebnis.amortisationMonate} Monate`
+        },
+      };
+
+      const containerStyle = {
+        fontFamily: "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+        background: 'linear-gradient(180deg, #0f1419 0%, #1a2332 100%)',
+        color: '#e8eaed',
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '720px',
+        margin: '0 auto',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+      };
+
+      return (
+        <div style={containerStyle}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '12px' }}>🛡️</div>
+            <h2 style={{
+              fontSize: '28px',
+              fontWeight: '700',
+              margin: '0 0 8px 0',
+              background: 'linear-gradient(135deg, #60a5fa 0%, #34d399 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>Cloud-Risiko-Rechner</h2>
+            <p style={{ fontSize: '15px', color: '#9ca3af', margin: 0 }}>
+              Was kostet Sie Cloud-KI wirklich? Compliance-Risiken + versteckte Kosten
+            </p>
+          </div>
+
+          {/* SERIOSITÄTS-DISCLAIMER */}
+          <div style={{
+            background: 'rgba(251, 191, 36, 0.08)',
+            border: '1px solid rgba(251, 191, 36, 0.25)',
+            borderRadius: '12px',
+            padding: '16px',
+            marginBottom: '28px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <span style={{ fontSize: '20px', flexShrink: 0 }}>📋</span>
+              <div>
+                <div style={{ 
+                  fontSize: '13px', 
+                  fontWeight: '700', 
+                  color: '#fbbf24',
+                  marginBottom: '6px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  Kein Marketing – echte Rechtsgrundlagen
+                </div>
+                <div style={{ fontSize: '12px', color: '#d1d5db', lineHeight: '1.6' }}>
+                  Dieser Rechner basiert auf <strong>tatsächlichen Bußgeldrahmen</strong> der DSGVO (Art. 83) und 
+                  den Strafvorschriften des <strong>§ 203 StGB</strong> (Verletzung von Privatgeheimnissen). 
+                  Die dargestellten Risiken sind keine Übertreibung – deutsche Aufsichtsbehörden haben 2023/24 
+                  Bußgelder in Millionenhöhe verhängt. 
+                  <span style={{ color: '#9ca3af', display: 'block', marginTop: '6px', fontSize: '11px' }}>
+                    Quellen: BfDI Tätigkeitsbericht, LfDI Baden-Württemberg, DSK-Beschlüsse zu US-Cloud-Diensten
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Input Section */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Branche */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#d1d5db' }}>Branche</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+                {Object.entries(branchenDaten).map(([key, data]) => (
+                  <button
+                    key={key}
+                    onClick={() => setBranche(key)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      padding: '14px 10px',
+                      background: branche === key ? 'rgba(96, 165, 250, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                      border: `2px solid ${branche === key ? '#60a5fa' : 'rgba(255, 255, 255, 0.1)'}`,
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      color: branche === key ? '#fff' : '#9ca3af',
+                    }}
+                  >
+                    <span style={{ fontSize: '24px', marginBottom: '6px' }}>{data.icon}</span>
+                    <span style={{ fontSize: '12px', fontWeight: '600', textAlign: 'center' }}>{data.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Slider: Mitarbeiter */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#d1d5db', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Mitarbeiter mit KI-Zugang</span>
+                <span style={{ fontSize: '16px', fontWeight: '700', color: '#60a5fa' }}>{mitarbeiter}</span>
+              </label>
+              <input
+                type="range"
+                min="5"
+                max="100"
+                value={mitarbeiter}
+                onChange={(e) => setMitarbeiter(Number(e.target.value))}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#6b7280' }}>
+                <span>5</span>
+                <span>100</span>
+              </div>
+            </div>
+
+            {/* Slider: Jahresumsatz */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#d1d5db', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Jahresumsatz (ca.)</span>
+                <span style={{ fontSize: '16px', fontWeight: '700', color: '#60a5fa' }}>{formatCurrency(jahresumsatz)}</span>
+              </label>
+              <input
+                type="range"
+                min="100000"
+                max="5000000"
+                step="50000"
+                value={jahresumsatz}
+                onChange={(e) => setJahresumsatz(Number(e.target.value))}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#6b7280' }}>
+                <span>100T €</span>
+                <span>5M €</span>
+              </div>
+            </div>
+
+            {/* Slider: Anfragen */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '600', color: '#d1d5db', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Sensible Anfragen / Monat</span>
+                <span style={{ fontSize: '16px', fontWeight: '700', color: '#60a5fa' }}>{anfragenProMonat}</span>
+              </label>
+              <input
+                type="range"
+                min="50"
+                max="2000"
+                step="50"
+                value={anfragenProMonat}
+                onChange={(e) => setAnfragenProMonat(Number(e.target.value))}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#6b7280' }}>
+                <span>50</span>
+                <span>2.000</span>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <button
+              onClick={() => setShowResults(true)}
+              style={{
+                width: '100%',
+                padding: '16px 24px',
+                fontSize: '16px',
+                fontWeight: '700',
+                color: '#fff',
+                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                marginTop: '8px',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 10px 25px -5px rgba(59, 130, 246, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              🧮 Risiko berechnen
+            </button>
+          </div>
+
+          {/* Results Section */}
+          {showResults && (
+            <div className="animate-in" style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* Risk Alert */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '14px',
+                padding: '16px',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '12px',
+              }}>
+                <div style={{ fontSize: '28px' }}>⚠️</div>
+                <div>
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#fca5a5', marginBottom: '4px' }}>
+                    {ergebnis.brancheDaten.berufsgeheimnis} – Cloud-KI problematisch
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#d1d5db' }}>
+                    {ergebnis.brancheDaten.cloudRisikoText}
+                  </div>
+                </div>
+              </div>
+
+              {/* Comparison Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                {/* Cloud Card */}
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.05)',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '24px' }}>☁️</span>
+                    <span style={{ fontSize: '17px', fontWeight: '700', flex: 1 }}>Cloud-KI</span>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      padding: '4px 10px',
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      color: '#fca5a5',
+                      borderRadius: '20px',
+                    }}>Risikoreich</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+                    <Tooltip text={tooltips.lizenzkosten.text} formula={tooltips.lizenzkosten.formula}>
+                      Lizenzkosten/Jahr
+                    </Tooltip>
+                    <span style={{ fontWeight: '600', color: '#d1d5db' }}>{formatCurrency(ergebnis.cloudKostenProJahr)}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+                    <Tooltip text={tooltips.bussgeldrisiko.text} formula={tooltips.bussgeldrisiko.formula}>
+                      DSGVO-Bußgeldrisiko
+                    </Tooltip>
+                    <span style={{ fontWeight: '600', color: '#f87171' }}>{formatCurrency(ergebnis.risikogewichtetBussgeld)}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+                    <Tooltip text={tooltips.reputationsrisiko.text} formula={tooltips.reputationsrisiko.formula}>
+                      Reputationsrisiko
+                    </Tooltip>
+                    <span style={{ fontWeight: '600', color: '#f87171' }}>{formatCurrency(ergebnis.reputationsrisiko)}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0 10px 0', fontSize: '14px', fontWeight: '700' }}>
+                    <span>Gesamtrisiko/Jahr</span>
+                    <span style={{ fontSize: '20px', color: '#f87171' }}>{formatCurrency(ergebnis.cloudGesamtrisiko + ergebnis.cloudKostenProJahr)}</span>
+                  </div>
+
+                  <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{ fontSize: '12px', color: '#fca5a5' }}>❌ US Cloud Act (Zugriff durch US-Behörden)</div>
+                    <div style={{ fontSize: '12px', color: '#fca5a5' }}>❌ Schrems II – kein angemessenes Datenschutzniveau</div>
+                    <div style={{ fontSize: '12px', color: '#fca5a5' }}>❌ Kein Audit durch Mandanten/Patienten möglich</div>
+                  </div>
+                </div>
+
+                {/* On-Premise Card */}
+                <div style={{
+                  background: 'rgba(52, 211, 153, 0.05)',
+                  border: '1px solid rgba(52, 211, 153, 0.2)',
+                  borderRadius: '16px',
+                  padding: '20px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '24px' }}>🏠</span>
+                    <span style={{ fontSize: '17px', fontWeight: '700', flex: 1 }}>On-Premise KI</span>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      padding: '4px 10px',
+                      background: 'rgba(52, 211, 153, 0.2)',
+                      color: '#6ee7b7',
+                      borderRadius: '20px',
+                    }}>DSGVO-konform</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+                    <Tooltip text={tooltips.setupKosten.text} formula={tooltips.setupKosten.formula}>
+                      Einmaliges Setup
+                    </Tooltip>
+                    <span style={{ fontWeight: '600', color: '#d1d5db' }}>{formatCurrency(ergebnis.onPremiseSetup)}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+                    <Tooltip text={tooltips.betriebskosten.text} formula={tooltips.betriebskosten.formula}>
+                      Betrieb & Wartung/Jahr
+                    </Tooltip>
+                    <span style={{ fontWeight: '600', color: '#d1d5db' }}>{formatCurrency(ergebnis.onPremiseBetrieb)}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+                    <Tooltip text={tooltips.complianceRisiko.text} formula={tooltips.complianceRisiko.formula}>
+                      Compliance-Risiko
+                    </Tooltip>
+                    <span style={{ fontWeight: '600', color: '#34d399' }}>{formatCurrency(0)}</span>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0 10px 0', fontSize: '14px', fontWeight: '700' }}>
+                    <span>Gesamtkosten Jahr 1</span>
+                    <span style={{ fontSize: '20px', color: '#34d399' }}>{formatCurrency(ergebnis.onPremiseGesamt)}</span>
+                  </div>
+
+                  <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{ fontSize: '12px', color: '#6ee7b7' }}>✅ Daten bleiben in Deutschland</div>
+                    <div style={{ fontSize: '12px', color: '#6ee7b7' }}>✅ Kein Drittland-Transfer (Art. 44 DSGVO)</div>
+                    <div style={{ fontSize: '12px', color: '#6ee7b7' }}>✅ Volle Kontrolle & Nachweisfähigkeit</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Summary */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
+                border: '1px solid rgba(52, 211, 153, 0.3)',
+                borderRadius: '16px',
+                padding: '24px',
+              }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', textAlign: 'center' }}>
+                  <div>
+                    <Tooltip text={tooltips.ersparnis.text} formula={tooltips.ersparnis.formula}>
+                      <div style={{
+                        fontSize: '26px',
+                        fontWeight: '800',
+                        background: 'linear-gradient(135deg, #34d399 0%, #60a5fa 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}>{formatCurrency(ergebnis.ersparnis)}</div>
+                    </Tooltip>
+                    <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Jährliche Ersparnis</div>
+                  </div>
+                  <div>
+                    <Tooltip text={tooltips.roi.text} formula={tooltips.roi.formula}>
+                      <div style={{
+                        fontSize: '26px',
+                        fontWeight: '800',
+                        background: 'linear-gradient(135deg, #34d399 0%, #60a5fa 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}>{ergebnis.roiProzent}%</div>
+                    </Tooltip>
+                    <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>ROI im ersten Jahr</div>
+                  </div>
+                  <div>
+                    <Tooltip text={tooltips.amortisation.text} formula={tooltips.amortisation.formula}>
+                      <div style={{
+                        fontSize: '26px',
+                        fontWeight: '800',
+                        background: 'linear-gradient(135deg, #34d399 0%, #60a5fa 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}>{ergebnis.amortisationMonate} Mon.</div>
+                    </Tooltip>
+                    <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Amortisation</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Legal Note - erweitert */}
+              <div style={{
+                fontSize: '12px',
+                color: '#9ca3af',
+                background: 'rgba(255, 255, 255, 0.03)',
+                padding: '16px',
+                borderRadius: '10px',
+                lineHeight: '1.7',
+              }}>
+                <div style={{ fontWeight: '700', color: '#d1d5db', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>⚖️</span> Rechtsgrundlagen dieser Berechnung
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <strong>DSGVO Art. 83:</strong> Bußgelder bis <strong>{formatCurrency(ergebnis.maxBussgeld)}</strong> (4% Ihres Jahresumsatzes) bei Verstößen gegen Datenschutzgrundsätze.
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <strong>{ergebnis.brancheDaten.berufsgeheimnis}:</strong> Berufsgeheimnisträger riskieren zusätzlich strafrechtliche Konsequenzen (Freiheitsstrafe bis 1 Jahr oder Geldstrafe).
+                </div>
+                <div style={{ color: '#6b7280', fontSize: '11px' }}>
+                  Reale Fälle: H&M (35 Mio. €), Deutsche Wohnen (14,5 Mio. €), 1&1 (9,55 Mio. €). 
+                  Die Eintrittswahrscheinlichkeit (15%) ist konservativ geschätzt – Aufsichtsbehörden prüfen zunehmend aktiv.
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                <a 
+                  href="mailto:kontakt@autark-ai.de?subject=Anfrage%20On-Premise%20KI"
+                  style={{
+                    display: 'inline-block',
+                    padding: '16px 32px',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#fff',
+                    background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
+                    borderRadius: '12px',
+                    textDecoration: 'none',
+                    boxShadow: '0 10px 25px -5px rgba(52, 211, 153, 0.3)',
+                  }}
+                >
+                  📞 Unverbindliches Gespräch vereinbaren
+                </a>
+                <p style={{ fontSize: '13px', color: '#9ca3af', marginTop: '12px' }}>
+                  Kostenlose Erstberatung • Pilot ab 1.200 € • Geld-zurück-Garantie
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            marginTop: '24px',
+            paddingTop: '20px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            fontSize: '13px',
+            color: '#6b7280',
+          }}>
+            <span style={{ color: '#34d399', animation: 'pulse 2s infinite' }}>●</span>
+            <span>Powered by <strong>autark-AI</strong> • Frankfurt am Main</span>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<CloudAvoidanceRechner />, document.getElementById('rechner-root'));
+  </script>
+</body>
+</html>
